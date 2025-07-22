@@ -1,10 +1,17 @@
 {
+    "id": "/",
     "name": "[tic tac toe]2",
     "short_name": "TicTacToe",
+    "description": "tic tac toe now needs a stratergy.",
     "start_url": ".",
+    "scope": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
+    "orientation": "any",
+    "launch_handler": {
+        "client_mode": "navigate-existing"
+    },
     "icons": [
         {
             "src": "icons/icon-192.png",
@@ -15,6 +22,20 @@
             "src": "icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshots/screenshot1.png",
+            "sizes": "640x480",
+            "type": "image/png",
+            "label": "Game board"
+        },
+        {
+            "src": "screenshots/screenshot2.png",
+            "sizes": "640x480",
+            "type": "image/png",
+            "label": "Player wins"
         }
     ]
 }
