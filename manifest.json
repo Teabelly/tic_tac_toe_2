@@ -3,8 +3,8 @@
     "name": "[tic tac toe]2",
     "short_name": "TicTacToe",
     "description": "tic tac toe now needs a stratergy.",
-    "start_url": ".",
-    "scope": ".",
+    "start_url": "https://teabelly.github.io",
+    "scope": "/tic_tac_toe_2/",
 
     "display": "fullscreen",
 
