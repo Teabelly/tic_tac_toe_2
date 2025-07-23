@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.teabelly.twa",
+        "sha256_cert_fingerprints": ["D0:4F:7F:8A:D3:8D:F4:33:51:F7:AA:87:DC:53:91:F5:16:AF:B6:EF:C8:73:C6:AF:A9:7E:CA:6E:B1:CE:74:0A"]
+      }
+    }]
