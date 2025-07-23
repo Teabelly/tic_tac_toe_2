@@ -6,7 +6,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundo" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_back" rel="stylesheet">
 
     <link rel="manifest" href="manifest.json">
 
@@ -318,6 +318,21 @@
             z-index: 1000;
         }
 
+        .centered-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 2rem; /* example size */
+        }
+
+        .arrow-icon {
+            position: absolute;
+            left: 5%;
+            font-size: 2rem; /* same as h1 or adjust */
+        }
+
+
     </style>
 </head>
 <body>
@@ -348,7 +363,11 @@
 
     <div id="instructions" style="display:none">
 
-        <h1> How to play </h1>
+
+        <h1 class="centered-title">
+            <span id="instruction_back" class="material-symbols-outlined arrow-icon">arrow_back</span>
+            How to play
+        </h1>
 
 
         <img src="instructions/instructions1.png" alt="rules of placing an x or o">
@@ -411,7 +430,7 @@
         const howToPlayButton = document.getElementById('howToPlayButton');
         const instructionsDiv = document.getElementById('instructions')
         const winmessage = document.getElementById('winMessageh1')
-
+        const instructionBack = document.getElementById('instruction_back')
         
 
 
@@ -422,6 +441,16 @@
         let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
             Array(3).fill(0).map(() => Array(3).fill(null))
         ));
+
+        instructionBack.addEventListener('click', () => {
+
+            instructionsDiv.style.display = "none";
+
+
+            menu_mainDiv.classList.remove('hidden');
+
+
+        });
 
         howToPlayButton.addEventListener('click', () => {
 
