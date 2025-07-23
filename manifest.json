@@ -5,7 +5,9 @@
     "description": "tic tac toe now needs a stratergy.",
     "start_url": ".",
     "scope": ".",
-    "display": "standalone",
+
+    "display": "fullscreen",
+
     "background_color": "#ffffff",
     "theme_color": "#000000",
     "orientation": "any",

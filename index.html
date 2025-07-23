@@ -6,6 +6,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundo" rel="stylesheet">
+
     <link rel="manifest" href="manifest.json">
 
     <meta name="theme-color" content="#000000">
@@ -158,7 +160,6 @@
         }
 
 
-            /* Hide default checkbox */
             .switch input {
                 opacity: 0;
                 width: 0;
@@ -229,11 +230,11 @@
 
         #menu_main {
             margin-bottom: 10px;
-            width: 50vw; /* 70% of the viewport width */
+            width: 100vw; /* 70% of the viewport width */
             max-width: 100%; /* don’t exceed the screen */
             margin: 0 auto; /* center horizontally */
             box-sizing: border-box; /* include padding/border in width */
-            padding: 2rem; /* some inner space */
+            padding: 4rem; /* some inner space */
         }
 
             #menu_main > div {
@@ -245,9 +246,9 @@
             background-color: #3b3b3b;
             color: white;
             border: none;
-            width: 20%;
+            width: 40%;
             max-width: 300px;
-            font-size: 2vw;
+            font-size: 4vw;
             padding: 10px;
             text-align: center;
             border-radius: 5%;
@@ -258,15 +259,15 @@
             box-shadow: 0 5px #999;
         }
 
-            .button:active {
-                background-color: #262626;
-                box-shadow: 0 5px #666;
-                transform: translateY(4px);
-            }
+        .button:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
 
-            .button:hover {
-                background-color: #262626
-            }
+        .button:hover {
+            background-color: #262626
+        }
 
 
         .button_unactive {
@@ -285,11 +286,38 @@
             box-shadow: 0 5px #999;
         }
 
-            .button_unactive:active {
-                background-color: #262626;
-                box-shadow: 0 5px #666;
-                transform: translateY(4px);
-            }
+        .button_unactive:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+
+        .material-symbols-outlined {
+            text-align: center;
+            vertical-align: middle;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+
+        .instructions h1 {
+            font-size: 2rem; /* or 32px */
+        }
+
+        .instructions h2 {
+            font-size: 0.5rem; /* or 24px */
+        }
+
+        .winOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
     </style>
 </head>
 <body>
@@ -300,21 +328,51 @@
 
         <div><button id="playLocalButton" class="button">Local</button></div>
 
-        <div><button id="playOnlineButton" class="button_unactive">Online</button></div>
+        <div><button id="playOnlineButton" class="button">Online</button></div>
+        
+        
+
+        <div>
+            <span class="material-symbols-outlined"> help </span>
+            <button id="howToPlayButton" class="button">How to play</button>
+        </div>
 
     </div>
 
     <div id="setup" class="hidden">
-        <h2>Enter Player Names</h2>
+        <h2>Player Names:</h2>
         <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
         <div><input type="text" id="player2" placeholder="Player 2 (O)"></div>
         <div><button id="playBtn" class="button">Play</button></div>
     </div>
 
+    <div id="instructions" style="display:none">
+
+        <h1> How to play </h1>
+
+
+        <img src="instructions/instructions1.png" alt="rules of placing an x or o">
+
+        <h2 stle="font-size: 2rem;"> Where you play in the small square decides where your opponent has to play next. </h2>
+
+        <img src="instructions/instructions2.png" alt="rules of placing an x or o">
+
+        <h2> If you send your opponent to a square that is already won, they can play anywhere. </h2>
+
+        <img src="instructions/instructions3.png" alt="rules of placing an x or o">
+
+        <h2> Like traditional tic tac toe, get 3 symbols in a row of the outer squares to win!  </h2>
+
+
+    </div>
+
 
     <div id="game" class="hidden">
+
+
+
         <div class="players">
-            <span id="name1"></span> &nbsp; (X)  &nbsp; vs &nbsp; <span id="name2"></span>  &nbsp; (O) 
+            <span id="name1"></span> &nbsp; (X)  &nbsp; vs &nbsp; <span id="name2"></span>  &nbsp; (O)
 
 
 
@@ -325,6 +383,19 @@
         </label>
 
         <div class="board" id="bigBoard"></div>
+
+        <div id="winOverlay">
+        </div>
+
+        <div id="winMessage">
+
+            <h1 id="winMessageh1"> </h1>
+
+        </div>
+
+
+
+
 
     </div>
 
@@ -337,6 +408,11 @@
         const bigBoardDiv = document.getElementById('bigBoard');
         const menu_mainDiv = document.getElementById('menu_main');
         const playLocalButton = document.getElementById('playLocalButton');
+        const howToPlayButton = document.getElementById('howToPlayButton');
+        const instructionsDiv = document.getElementById('instructions')
+        const winmessage = document.getElementById('winMessageh1')
+
+        
 
 
         let players = [];
@@ -346,6 +422,16 @@
         let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
             Array(3).fill(0).map(() => Array(3).fill(null))
         ));
+
+        howToPlayButton.addEventListener('click', () => {
+
+            instructionsDiv.style.display = "block";
+
+
+            menu_mainDiv.classList.add('hidden');
+            
+
+        });
 
         playLocalButton.addEventListener('click', () => {
 
@@ -366,6 +452,45 @@
             createBoard();
             highlightNextSubgrid();
         });
+
+
+        function showWinAnimation(winner) {
+            const overlay = document.getElementById('winOverlay');
+            overlay.style.display = 'block';
+            overlay.innerHTML = ''; // clear previous
+
+            const columns = Math.floor(window.innerWidth / 20);
+
+            for (let i = 0; i < columns; i++) {
+                const col = document.createElement('div');
+                col.style.position = 'absolute';
+                col.style.left = `${i * 20}px`;
+                col.style.top = `-${Math.random() * 500}px`;
+                col.style.fontFamily = 'monospace';
+                col.style.color = 'black';
+                col.style.fontSize = '2rem';
+                col.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                overlay.appendChild(col);
+
+                animateDrop(col);
+            }
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 5000); // hide after 5 seconds
+        }
+
+        function animateDrop(element) {
+            let top = parseFloat(element.style.top);
+            const interval = setInterval(() => {
+                top += 5;
+                if (top > window.innerHeight) {
+                    top = -50; // reset to top
+                    element.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                }
+                element.style.top = `${top}px`;
+            }, 30);
+        }
 
 
         const darkModeToggle = document.getElementById('darkModeToggle');
@@ -445,7 +570,12 @@
 
             // Check if big grid is won
             if (checkWin(bigBoardState, mark)) {
-                alert(`${players[currentPlayer]} wins the game!`);
+
+                // alert(`${players[currentPlayer]} wins the game!`);
+                showWinAnimation(players[currentPlayer]);
+
+                winmessage.innerHTML = `${players[currentPlayer]} won!`
+
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
                 return;
             }
