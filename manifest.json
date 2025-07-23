@@ -3,10 +3,10 @@
     "name": "[tic tac toe]2",
     "short_name": "TicTacToe",
     "description": "tic tac toe now needs a stratergy.",
-    "start_url": "https://teabelly.github.io",
-    "scope": "/tic_tac_toe_2/",
+    "start_url": "https://teabelly.github.io/tic_tac_toe_2/",
+    "scope": "https://teabelly.github.io/tic_tac_toe_2/",
 
-    "display": "fullscreen",
+    "display": "standalone",
 
     "background_color": "#ffffff",
     "theme_color": "#000000",
