@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -259,15 +260,15 @@
             box-shadow: 0 5px #999;
         }
 
-        .button:active {
-            background-color: #262626;
-            box-shadow: 0 5px #666;
-            transform: translateY(4px);
-        }
+            .button:active {
+                background-color: #262626;
+                box-shadow: 0 5px #666;
+                transform: translateY(4px);
+            }
 
-        .button:hover {
-            background-color: #262626
-        }
+            .button:hover {
+                background-color: #262626
+            }
 
 
         .button_unactive {
@@ -286,11 +287,11 @@
             box-shadow: 0 5px #999;
         }
 
-        .button_unactive:active {
-            background-color: #262626;
-            box-shadow: 0 5px #666;
-            transform: translateY(4px);
-        }
+            .button_unactive:active {
+                background-color: #262626;
+                box-shadow: 0 5px #666;
+                transform: translateY(4px);
+            }
 
 
         .material-symbols-outlined {
@@ -332,8 +333,6 @@
             left: 5%;
             font-size: 2rem; /* same as h1 or adjust */
         }
-
-
     </style>
 </head>
 <body>
@@ -343,12 +342,12 @@
     <div id="setup">
 
         <span onclick="window.location.href='index.html';" id="instruction_back" class="material-symbols-outlined arrow-icon">arrow_back</span>
-        
+
 
         <h2>Player Name:</h2>
         <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
 
-        
+
 
         <div>
             <label for="difficulty">Difficulty:</label>
@@ -360,7 +359,7 @@
 
             </select>
         </div>
-        
+
         <div><button id="playBtn" class="button">Play</button></div>
 
     </div>
@@ -435,7 +434,7 @@
             highlightNextSubgrid();
 
             if (currentPlayer === 1) {
-                setTimeout(botMove, 3); 
+                setTimeout(botMove, 3);
             }
         });
 
@@ -628,7 +627,7 @@
         function botMove() {
             let moves = [];
 
-            
+
             for (let br = 0; br < 3; br++) {
                 for (let bc = 0; bc < 3; bc++) {
                     if (bigBoardState[br][bc]) continue;
@@ -688,15 +687,20 @@
         }
 
         function findBestMoveHard(moves) {
-            const aiMark = currentPlayer === 1 ? 'O' : 'X';
-            const humanMark = currentPlayer === 1 ? 'X' : 'O';
+            const mark = currentPlayer === 1 ? 'O' : 'X';
+            const opponent = currentPlayer === 1 ? 'X' : 'O';
 
             let bestScore = -Infinity;
             let bestMove = null;
 
             for (let move of moves) {
-                // Setup for minimax call
-                let score = ultimateMinimax(bigBoardState, subBoardStates, nextSubgrid, 0, true, aiMark, humanMark, -Infinity, Infinity);
+                const { br, bc, sr, sc } = move;
+
+                // Clone the current subgrid
+                const clone = subBoardStates[br][bc].map(row => [...row]);
+                clone[sr][sc] = mark;
+
+                const score = minimax(clone, 0, false, mark, opponent);
 
                 if (score > bestScore) {
                     bestScore = score;
@@ -706,59 +710,6 @@
 
             return bestMove;
         }
-
-
-        function ultimateMinimax(bigBoardState, subBoardStates, nextSubgrid, depth, isMaximizing, aiMark, humanMark, alpha, beta) {
-            // Check if game won on bigBoard
-            if (checkWin(bigBoardState, aiMark)) return 1000 - depth;  // big win is very valuable
-            if (checkWin(bigBoardState, humanMark)) return depth - 1000; // big loss is very bad
-            if (isFullBigBoard(bigBoardState)) return 0;  // draw
-
-            if (depth >= 3) { // Depth limit for performance
-                return evaluateBoard(bigBoardState, subBoardStates, aiMark, humanMark);
-            }
-
-            let moves = generateMoves(bigBoardState, subBoardStates, nextSubgrid);
-
-            if (moves.length === 0) return 0; // no moves
-
-            let bestScore = isMaximizing ? -Infinity : Infinity;
-
-            for (let move of moves) {
-                // Clone states for recursion
-                let newBigBoard = clone2DArray(bigBoardState);
-                let newSubBoards = clone4DArray(subBoardStates);
-
-                // Apply move
-                newSubBoards[move.br][move.bc][move.sr][move.sc] = isMaximizing ? aiMark : humanMark;
-
-                // Check if subgrid won/drawn after move
-                if (checkWin(newSubBoards[move.br][move.bc], isMaximizing ? aiMark : humanMark)) {
-                    newBigBoard[move.br][move.bc] = isMaximizing ? aiMark : humanMark;
-                } else if (isFullSubgrid(newSubBoards[move.br][move.bc])) {
-                    newBigBoard[move.br][move.bc] = 'draw';
-                }
-
-                // Determine next subgrid for opponent
-                let next = (newBigBoard[move.sr][move.sc]) ? null : [move.sr, move.sc];
-
-                // Recursive call
-                let score = ultimateMinimax(newBigBoard, newSubBoards, next, depth + 1, !isMaximizing, aiMark, humanMark, alpha, beta);
-
-                if (isMaximizing) {
-                    bestScore = Math.max(bestScore, score);
-                    alpha = Math.max(alpha, score);
-                    if (beta <= alpha) break; // alpha-beta pruning
-                } else {
-                    bestScore = Math.min(bestScore, score);
-                    beta = Math.min(beta, score);
-                    if (beta <= alpha) break;
-                }
-            }
-
-            return bestScore;
-        }
-
 
         function minimax(board, depth, isMaximizing, aiMark, humanMark) {
             if (checkWin(board, aiMark)) return 10 - depth;
@@ -780,44 +731,6 @@
 
             return best;
         }
-
-        function evaluateBoard(bigBoard, subBoards, aiMark, humanMark) {
-            let score = 0;
-
-            // Big board score: +100 for each subgrid won by AI, -100 for opponent
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 3; c++) {
-                    if (bigBoard[r][c] === aiMark) score += 100;
-                    else if (bigBoard[r][c] === humanMark) score -= 100;
-                    else if (bigBoard[r][c] === 'draw') score += 0;
-                    else {
-                        // Partial score for subgrid: count AI and human marks
-                        let aiCount = 0, humanCount = 0;
-                        for (let sr = 0; sr < 3; sr++) {
-                            for (let sc = 0; sc < 3; sc++) {
-                                if (subBoards[r][c][sr][sc] === aiMark) aiCount++;
-                                else if (subBoards[r][c][sr][sc] === humanMark) humanCount++;
-                            }
-                        }
-                        score += (aiCount - humanCount);
-                    }
-                }
-            }
-
-            // You can add more heuristics here, e.g., lines almost complete on bigBoard
-
-            return score;
-        }
-
-        function clone2DArray(arr) {
-            return arr.map(row => row.slice());
-        }
-
-        function clone4DArray(arr) {
-            return arr.map(grid => grid.map(row => row.map(cell => cell)));
-        }
-
-
 
         function isFull(board) {
             return board.every(row => row.every(cell => cell));
