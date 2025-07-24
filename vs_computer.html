@@ -1,0 +1,742 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_back" rel="stylesheet">
+
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#000000">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> [tic tac toe]2 </title>
+    <style>
+
+        html, body, .container {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .players {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1em;
+            position: relative;
+            background: transparent;
+            color: inherit;
+        }
+
+            .players span::selection {
+                background: transparent;
+                color: inherit;
+            }
+
+
+        #darkModeToggle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+
+        .highlight {
+            color: #9bbd9b;
+            font-weight: bold;
+        }
+
+        body.dark-mode .highlight {
+            color: #eee;
+        }
+
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 90vmin;
+            margin: auto;
+        }
+
+        .cell {
+            position: relative;
+            background: #eee;
+            border: 2px solid #000;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            aspect-ratio: 1;
+        }
+
+            .cell .winner-mark {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10vmin;
+                color: rgba(0,0,0,0.2);
+                pointer-events: none;
+                font-size: 30vmin;
+            }
+
+
+        .subcell {
+            border: 1px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 4vmin;
+            width: 100%;
+            height: 100%;
+        }
+
+        .active-subgrid {
+            background: #cfc;
+        }
+
+        body.dark-mode .active-subgrid {
+            box-shadow: 0 0 10px #999 inset;
+        }
+
+
+
+        .won {
+            background: #ccc;
+            pointer-events: none;
+        }
+
+        body.dark-mode {
+            background-color: #111;
+            color: #999;
+        }
+
+            body.dark-mode .cell {
+                background-color: #222;
+                border-color: #666;
+            }
+
+            body.dark-mode .subcell {
+                border-color: #444;
+            }
+
+            body.dark-mode .highlight {
+                color: #eee;
+            }
+
+            body.dark-mode .winner-mark {
+                color: rgba(255, 255, 255, 0.2);
+            }
+
+
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            float: right;
+        }
+
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+
+            /* Rounded slider */
+            .slider.round {
+                border-radius: 34px;
+            }
+
+                .slider.round:before {
+                    position: absolute;
+                    content: "☀";
+                    height: 18px;
+                    width: 18px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: white;
+                    transition: 0.4s;
+                    border-radius: 50%;
+                    text-align: center;
+                    line-height: 18px;
+                    font-size: 12px;
+                    color: black;
+                }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            content: "☾";
+            color: black;
+        }
+
+
+
+        /* Checked state */
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+
+        #darkModeSwitch {
+            position: absolute;
+            top: 0.5rem; /* adjust as needed */
+            right: 1rem;
+            z-index: 10;
+        }
+
+        #setup > * {
+            margin-bottom: 10px;
+        }
+
+
+        #menu_main {
+            margin-bottom: 10px;
+            width: 100vw; /* 70% of the viewport width */
+            max-width: 100%; /* don’t exceed the screen */
+            margin: 0 auto; /* center horizontally */
+            box-sizing: border-box; /* include padding/border in width */
+            padding: 4rem; /* some inner space */
+        }
+
+            #menu_main > div {
+                margin-bottom: 1rem; /* spacing between children */
+                font-size: 100%;
+            }
+
+        .button {
+            background-color: #3b3b3b;
+            color: white;
+            border: none;
+            width: 40%;
+            max-width: 300px;
+            font-size: 4vw;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5%;
+            display: inline-block;
+            outline: none;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px #999;
+        }
+
+        .button:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        .button:hover {
+            background-color: #262626
+        }
+
+
+        .button_unactive {
+            background-color: #3b3b3b;
+            color: white;
+            width: 20%;
+            max-width: 300px;
+            font-size: 2vw;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5%;
+            display: inline-block;
+            outline: none;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px #999;
+        }
+
+        .button_unactive:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+
+        .material-symbols-outlined {
+            display: block;
+            text-align: center;
+            vertical-align: middle;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+
+        .instructions h1 {
+            font-size: 2rem; /* or 32px */
+        }
+
+        .instructions h2 {
+            font-size: 0.5rem; /* or 24px */
+        }
+
+        .winOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .centered-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 2rem; /* example size */
+        }
+
+        .arrow-icon {
+            position: absolute;
+            left: 5%;
+            font-size: 2rem; /* same as h1 or adjust */
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+
+    <div id="setup">
+
+        <span onclick="window.location.href='index.html';" id="instruction_back" class="material-symbols-outlined arrow-icon">arrow_back</span>
+        
+
+        <h2>Player Name:</h2>
+        <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
+
+        <div><button id="playBtn" class="button">Play</button></div>
+
+        <div>
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+
+            </select>
+        </div>
+
+    </div>
+
+    <div id="game" class="hidden">
+
+
+
+        <div class="players">
+            <span id="name1"></span> &nbsp;  (X)  &nbsp; &nbsp;  <i>vs</i> &nbsp;  &nbsp;  <span id="name2"></span>  &nbsp; (O)
+        </div>
+
+        <label class="switch" id="darkModeSwitch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider round"></span>
+        </label>
+
+        <div class="board" id="bigBoard"></div>
+
+        <div id="winOverlay">
+        </div>
+
+        <div id="winMessage">
+
+            <h1 id="winMessageh1"> </h1>
+
+        </div>
+
+
+
+
+
+    </div>
+
+    <script>
+
+        const setupDiv = document.getElementById('setup');
+        const gameDiv = document.getElementById('game');
+        const playBtn = document.getElementById('playBtn');
+        const name1Span = document.getElementById('name1');
+        const name2Span = document.getElementById('name2');
+        const bigBoardDiv = document.getElementById('bigBoard');
+        const winmessage = document.getElementById('winMessageh1')
+        const instructionBack = document.getElementById('instruction_back')
+
+        let players = [];
+        let currentPlayer = 0; // 0 or 1
+        let nextSubgrid = null; // [row, col] or null if any
+        let bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null)); // null / 'X' / 'O'
+        let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
+            Array(3).fill(0).map(() => Array(3).fill(null))
+        ));
+
+        let difficulty = 'easy'; // default
+
+
+
+
+
+        playBtn.addEventListener('click', () => {
+            const p1 = document.getElementById('player1').value || "Player 1";
+            const p2 = "Computer";
+            players = [p1, p2];
+            currentPlayer = Math.floor(Math.random() * 2);
+
+            difficulty = document.getElementById('difficulty').value;
+
+            gameDiv.classList.remove('hidden');
+            setup.classList.add('hidden');
+            renderNames();
+            createBoard();
+            highlightNextSubgrid();
+
+            if (currentPlayer === 1) {
+                setTimeout(botMove, 3); 
+            }
+        });
+
+
+
+        function showWinAnimation(winner) {
+            const overlay = document.getElementById('winOverlay');
+            overlay.style.display = 'block';
+            overlay.innerHTML = ''; // clear previous
+
+            const columns = Math.floor(window.innerWidth / 20);
+
+            for (let i = 0; i < columns; i++) {
+                const col = document.createElement('div');
+                col.style.position = 'absolute';
+                col.style.left = `${i * 20}px`;
+                col.style.top = `-${Math.random() * 500}px`;
+                col.style.fontFamily = 'monospace';
+                col.style.color = 'black';
+                col.style.fontSize = '2rem';
+                col.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                overlay.appendChild(col);
+
+                animateDrop(col);
+            }
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 5000); // hide after 5 seconds
+        }
+
+        function animateDrop(element) {
+            let top = parseFloat(element.style.top);
+            const interval = setInterval(() => {
+                top += 5;
+                if (top > window.innerHeight) {
+                    top = -50; // reset to top
+                    element.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                }
+                element.style.top = `${top}px`;
+            }, 30);
+        }
+
+
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        darkModeToggle.addEventListener('change', () => {
+            if (darkModeToggle.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+
+
+        function renderNames() {
+            name1Span.textContent = players[0];
+            name2Span.textContent = players[1];
+            if (currentPlayer === 0) {
+                name1Span.classList.add('highlight');
+                name2Span.classList.remove('highlight');
+            } else {
+                name2Span.classList.add('highlight');
+                name1Span.classList.remove('highlight');
+            }
+        }
+
+        function createBoard() {
+            bigBoardDiv.innerHTML = '';
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    for (let sr = 0; sr < 3; sr++) {
+                        for (let sc = 0; sc < 3; sc++) {
+                            const subcell = document.createElement('div');
+                            subcell.classList.add('subcell');
+                            subcell.dataset.bigRow = r;
+                            subcell.dataset.bigCol = c;
+                            subcell.dataset.subRow = sr;
+                            subcell.dataset.subCol = sc;
+                            subcell.addEventListener('click', handleMove);
+                            cell.appendChild(subcell);
+                        }
+                    }
+                    bigBoardDiv.appendChild(cell);
+                }
+            }
+        }
+
+        function handleMove(e) {
+
+
+            const el = e.currentTarget;
+            const br = +el.dataset.bigRow, bc = +el.dataset.bigCol;
+            const sr = +el.dataset.subRow, sc = +el.dataset.subCol;
+
+            if (bigBoardState[br][bc]) return; // already won
+
+            if (subBoardStates[br][bc][sr][sc]) return; // already filled
+            if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) return; // wrong grid
+
+            const mark = currentPlayer === 0 ? 'X' : 'O';
+            subBoardStates[br][bc][sr][sc] = mark;
+            el.textContent = mark;
+
+            // Check if subgrid is won
+            if (checkWin(subBoardStates[br][bc], mark)) {
+
+                bigBoardState[br][bc] = mark;
+                const cell = findCell(br, bc);
+                cell.classList.add('won');
+                const overlay = document.createElement('div');
+                overlay.classList.add('winner-mark');
+                overlay.textContent = mark;
+                cell.appendChild(overlay);
+
+
+            }
+            else if (isFullSubgrid(subBoardStates[br][bc])) {
+                // Mark subgrid as drawn - block moves here
+                bigBoardState[br][bc] = 'draw';  // or any sentinel value
+                const cell = findCell(br, bc);
+                cell.classList.add('won');  // same style for inactive
+                const overlay = document.createElement('div');
+                overlay.classList.add('winner-mark');
+                overlay.textContent = '—'; // or something to indicate a draw
+                cell.appendChild(overlay);
+            }
+
+
+            if (checkWin(bigBoardState, mark)) {
+                showWinAnimation(players[currentPlayer]);
+                winmessage.innerHTML = `${players[currentPlayer]} won!`;
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+                return;
+            }
+
+
+            // Determine next subgrid
+            if (!bigBoardState[sr][sc]) {
+                nextSubgrid = [sr, sc];
+            } else {
+                nextSubgrid = null; // allow any free subgrid if targeted one is blocked
+            }
+
+
+            currentPlayer = 1 - currentPlayer;
+            renderNames();
+            highlightNextSubgrid();
+
+            if (currentPlayer === 1) {
+                setTimeout(botMove, 100); // small delay to simulate thinking
+            }
+
+        }
+
+        function findCell(r, c) {
+            return [...bigBoardDiv.children].find(el => +el.dataset.row === r && +el.dataset.col === c);
+        }
+
+        function highlightNextSubgrid() {
+            [...bigBoardDiv.children].forEach(cell => {
+                const r = +cell.dataset.row, c = +cell.dataset.col;
+                cell.classList.remove('active-subgrid');
+                if (!bigBoardState[r][c] &&
+                    (!nextSubgrid || (nextSubgrid[0] === r && nextSubgrid[1] === c))) {
+                    cell.classList.add('active-subgrid');
+                }
+            });
+        }
+
+        function checkWin(board, mark) {
+            for (let i = 0; i < 3; i++) {
+                if (board[i][0] === mark && board[i][1] === mark && board[i][2] === mark) return true;
+                if (board[0][i] === mark && board[1][i] === mark && board[2][i] === mark) return true;
+            }
+            if (board[0][0] === mark && board[1][1] === mark && board[2][2] === mark) return true;
+            if (board[0][2] === mark && board[1][1] === mark && board[2][0] === mark) return true;
+            return false;
+        }
+
+        function isFullSubgrid(subgrid) {
+            return subgrid.every(row => row.every(cell => cell !== null));
+        }
+
+
+        function botMove() {
+            let moves = [];
+
+            
+            for (let br = 0; br < 3; br++) {
+                for (let bc = 0; bc < 3; bc++) {
+                    if (bigBoardState[br][bc]) continue;
+                    if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) continue;
+                    for (let sr = 0; sr < 3; sr++) {
+                        for (let sc = 0; sc < 3; sc++) {
+                            if (!subBoardStates[br][bc][sr][sc]) {
+                                moves.push({ br, bc, sr, sc });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (moves.length === 0) return;
+
+            let choice;
+
+            if (difficulty === 'easy') {
+                choice = moves[Math.floor(Math.random() * moves.length)];
+            } else if (difficulty === 'medium') {
+                choice = findBestMoveMedium(moves) || moves[Math.floor(Math.random() * moves.length)];
+            } else if (difficulty === 'hard') {
+                choice = findBestMoveHard(moves) || moves[Math.floor(Math.random() * moves.length)];
+            }
+
+
+            if (!choice) return;
+
+            const cell = [...bigBoardDiv.children].find(el =>
+                +el.dataset.row === choice.br && +el.dataset.col === choice.bc
+            );
+            const subcell = [...cell.children].find(el =>
+                +el.dataset.subRow === choice.sr && +el.dataset.subCol === choice.sc
+            );
+
+            subcell.click();
+        }
+
+        function findBestMoveMedium(moves) {
+            const myMark = currentPlayer === 1 ? 'O' : 'X';
+            const opponentMark = currentPlayer === 1 ? 'X' : 'O';
+
+            for (let mark of [myMark, opponentMark]) {
+                for (let move of moves) {
+                    const { br, bc, sr, sc } = move;
+                    const subgrid = subBoardStates[br][bc].map(row => [...row]);
+                    subgrid[sr][sc] = mark;
+
+                    if (checkWin(subgrid, mark)) {
+                        return move;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function findBestMoveHard(moves) {
+            const mark = currentPlayer === 1 ? 'O' : 'X';
+            const opponent = currentPlayer === 1 ? 'X' : 'O';
+
+            let bestScore = -Infinity;
+            let bestMove = null;
+
+            for (let move of moves) {
+                const { br, bc, sr, sc } = move;
+
+                // Clone the current subgrid
+                const clone = subBoardStates[br][bc].map(row => [...row]);
+                clone[sr][sc] = mark;
+
+                const score = minimax(clone, 0, false, mark, opponent);
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            }
+
+            return bestMove;
+        }
+
+        function minimax(board, depth, isMaximizing, aiMark, humanMark) {
+            if (checkWin(board, aiMark)) return 10 - depth;
+            if (checkWin(board, humanMark)) return depth - 10;
+            if (isFull(board)) return 0;
+
+            let best = isMaximizing ? -Infinity : Infinity;
+
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    if (!board[r][c]) {
+                        board[r][c] = isMaximizing ? aiMark : humanMark;
+                        const score = minimax(board, depth + 1, !isMaximizing, aiMark, humanMark);
+                        board[r][c] = null;
+                        best = isMaximizing ? Math.max(best, score) : Math.min(best, score);
+                    }
+                }
+            }
+
+            return best;
+        }
+
+        function isFull(board) {
+            return board.every(row => row.every(cell => cell));
+        }
+
+
+    </script>
+
+</body>
+</html>

@@ -342,10 +342,10 @@
         <div> <h1> [tic tac toe] <sup>2</sup> </h1> </div>
 
         <div><button id="playLocalButton" class="button">Local</button></div>
-
+        <div><button onclick="window.location.href='vs_computer.html';" id="playComputerButton" class="button"> <i>vs</i> computer </button></div>
         <div><button id="playOnlineButton" class="button">Online</button></div>
-        
-        
+
+
 
         <div>
             <span class="material-symbols-outlined"> help </span>
@@ -596,6 +596,17 @@
 
 
             }
+            else if (isFullSubgrid(subBoardStates[br][bc])) {
+                // Mark subgrid as drawn - block moves here
+                bigBoardState[br][bc] = 'draw';  // or any sentinel value
+                const cell = findCell(br, bc);
+                cell.classList.add('won');  // same style for inactive
+                const overlay = document.createElement('div');
+                overlay.classList.add('winner-mark');
+                overlay.textContent = '—'; // or something to indicate a draw
+                cell.appendChild(overlay);
+            }
+
 
             // Check if big grid is won
             if (checkWin(bigBoardState, mark)) {
@@ -645,6 +656,11 @@
             if (board[0][2] === mark && board[1][1] === mark && board[2][0] === mark) return true;
             return false;
         }
+
+        function isFullSubgrid(subgrid) {
+            return subgrid.every(row => row.every(cell => cell !== null));
+        }
+
     </script>
 
 </body>
