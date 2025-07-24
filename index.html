@@ -426,6 +426,13 @@
 
     <script>
 
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 1);
+            }, 100);
+        });
+
+
         const height = window.innerHeight;
         document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
 
