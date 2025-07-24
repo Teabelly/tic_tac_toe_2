@@ -1,22 +1,14 @@
-﻿﻿
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_back" rel="stylesheet">
-
     <link rel="manifest" href="manifest.json">
-
     <meta name="theme-color" content="#000000">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> [tic tac toe]2 </title>
     <style>
-
         html, body, .container {
             width: 100vw;
             height: 100vh;
@@ -49,14 +41,12 @@
                 color: inherit;
             }
 
-
         #darkModeToggle {
             position: absolute;
             right: 0;
             top: 50%;
             transform: translateY(-50%);
         }
-
 
         .highlight {
             color: #9bbd9b;
@@ -66,7 +56,6 @@
         body.dark-mode .highlight {
             color: #eee;
         }
-
 
         .board {
             display: grid;
@@ -101,7 +90,6 @@
                 font-size: 30vmin;
             }
 
-
         .subcell {
             border: 1px solid #999;
             display: flex;
@@ -120,8 +108,6 @@
         body.dark-mode .active-subgrid {
             box-shadow: 0 0 10px #999 inset;
         }
-
-
 
         .won {
             background: #ccc;
@@ -150,8 +136,6 @@
                 color: rgba(255, 255, 255, 0.2);
             }
 
-
-
         .switch {
             position: relative;
             display: inline-block;
@@ -159,7 +143,6 @@
             height: 24px;
             float: right;
         }
-
 
             .switch input {
                 opacity: 0;
@@ -206,8 +189,6 @@
             color: black;
         }
 
-
-
         /* Checked state */
         input:checked + .slider {
             background-color: #2196F3;
@@ -227,7 +208,6 @@
         #setup > * {
             margin-bottom: 10px;
         }
-
 
         #menu_main {
             margin-bottom: 10px;
@@ -270,7 +250,6 @@
                 background-color: #262626
             }
 
-
         .button_unactive {
             background-color: #3b3b3b;
             color: white;
@@ -292,7 +271,6 @@
                 box-shadow: 0 5px #666;
                 transform: translateY(4px);
             }
-
 
         .material-symbols-outlined {
             display: block;
@@ -336,66 +314,39 @@
     </style>
 </head>
 <body>
-
-
-
     <div id="setup">
-
         <span onclick="window.location.href='index.html';" id="instruction_back" class="material-symbols-outlined arrow-icon">arrow_back</span>
-
-
         <h2>Player Name:</h2>
         <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
-
-
-
         <div>
             <label for="difficulty">Difficulty:</label>
             <select id="difficulty">
-
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
-
             </select>
         </div>
-
         <div><button id="playBtn" class="button">Play</button></div>
-
     </div>
 
     <div id="game" class="hidden">
-
-
-
         <div class="players">
-            <span id="name1"></span> &nbsp;  (X)  &nbsp; &nbsp;  <i>vs</i> &nbsp;  &nbsp;  <span id="name2"></span>  &nbsp; (O)
+            <span id="name1"></span> &nbsp; (X) &nbsp; &nbsp; <i>vs</i> &nbsp; &nbsp; <span id="name2"></span> &nbsp; (O)
         </div>
-
         <label class="switch" id="darkModeSwitch">
             <input type="checkbox" id="darkModeToggle">
             <span class="slider round"></span>
         </label>
-
         <div class="board" id="bigBoard"></div>
-
         <div id="winOverlay">
         </div>
-
         <div id="winMessage">
-
             <h1 id="winMessageh1"> </h1>
-
         </div>
-
-
-
-
-
     </div>
 
     <script>
-
+        // DOM Elements
         const setupDiv = document.getElementById('setup');
         const gameDiv = document.getElementById('game');
         const playBtn = document.getElementById('playBtn');
@@ -405,19 +356,33 @@
         const winmessage = document.getElementById('winMessageh1')
         const instructionBack = document.getElementById('instruction_back')
 
+        // Game State Variables
         let players = [];
         let currentPlayer = 0; // 0 or 1
         let nextSubgrid = null; // [row, col] or null if any
-        let bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null)); // null / 'X' / 'O'
+        let bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null)); // null / 'X' / 'O' / 'draw'
         let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
             Array(3).fill(0).map(() => Array(3).fill(null))
         ));
 
         let difficulty = 'easy'; // default
 
-
-
-
+        // Constants
+        const PLAYER_X = 'X';
+        const PLAYER_O = 'O';
+        const WINNING_COMBINATIONS = [
+            // Rows
+            [[0, 0], [0, 1], [0, 2]],
+            [[1, 0], [1, 1], [1, 2]],
+            [[2, 0], [2, 1], [2, 2]],
+            // Columns
+            [[0, 0], [1, 0], [2, 0]],
+            [[0, 1], [1, 1], [2, 1]],
+            [[0, 2], [1, 2], [2, 2]],
+            // Diagonals
+            [[0, 0], [1, 1], [2, 2]],
+            [[0, 2], [1, 1], [2, 0]]
+        ];
 
         playBtn.addEventListener('click', () => {
             const p1 = document.getElementById('player1').value || "Player 1";
@@ -434,11 +399,9 @@
             highlightNextSubgrid();
 
             if (currentPlayer === 1) {
-                setTimeout(botMove, 3);
+                setTimeout(botMove, 100); // Small delay for bot's first move
             }
         });
-
-
 
         function showWinAnimation(winner) {
             const overlay = document.getElementById('winOverlay');
@@ -478,7 +441,6 @@
             }, 30);
         }
 
-
         const darkModeToggle = document.getElementById('darkModeToggle');
 
         darkModeToggle.addEventListener('change', () => {
@@ -488,7 +450,6 @@
                 document.body.classList.remove('dark-mode');
             }
         });
-
 
         function renderNames() {
             name1Span.textContent = players[0];
@@ -528,24 +489,20 @@
         }
 
         function handleMove(e) {
-
-
             const el = e.currentTarget;
             const br = +el.dataset.bigRow, bc = +el.dataset.bigCol;
             const sr = +el.dataset.subRow, sc = +el.dataset.subCol;
 
-            if (bigBoardState[br][bc]) return; // already won
-
+            if (bigBoardState[br][bc]) return; // already won or drawn
             if (subBoardStates[br][bc][sr][sc]) return; // already filled
             if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) return; // wrong grid
 
-            const mark = currentPlayer === 0 ? 'X' : 'O';
+            const mark = currentPlayer === 0 ? PLAYER_X : PLAYER_O;
             subBoardStates[br][bc][sr][sc] = mark;
             el.textContent = mark;
 
             // Check if subgrid is won
             if (checkWin(subBoardStates[br][bc], mark)) {
-
                 bigBoardState[br][bc] = mark;
                 const cell = findCell(br, bc);
                 cell.classList.add('won');
@@ -553,20 +510,25 @@
                 overlay.classList.add('winner-mark');
                 overlay.textContent = mark;
                 cell.appendChild(overlay);
-
-
+            } else if (isFullSubgrid(subBoardStates[br][bc])) {
+                // Check for subgrid draw
+                let subgridWon = false;
+                for (let pMark of [PLAYER_X, PLAYER_O]) {
+                    if (checkWin(subBoardStates[br][bc], pMark)) {
+                        subgridWon = true;
+                        break;
+                    }
+                }
+                if (!subgridWon) {
+                    bigBoardState[br][bc] = 'draw'; // Mark as draw
+                    const cell = findCell(br, bc);
+                    cell.classList.add('won'); // same style for inactive
+                    const overlay = document.createElement('div');
+                    overlay.classList.add('winner-mark');
+                    overlay.textContent = '—'; // or something to indicate a draw
+                    cell.appendChild(overlay);
+                }
             }
-            else if (isFullSubgrid(subBoardStates[br][bc])) {
-                // Mark subgrid as drawn - block moves here
-                bigBoardState[br][bc] = 'draw';  // or any sentinel value
-                const cell = findCell(br, bc);
-                cell.classList.add('won');  // same style for inactive
-                const overlay = document.createElement('div');
-                overlay.classList.add('winner-mark');
-                overlay.textContent = '—'; // or something to indicate a draw
-                cell.appendChild(overlay);
-            }
-
 
             if (checkWin(bigBoardState, mark)) {
                 showWinAnimation(players[currentPlayer]);
@@ -575,14 +537,12 @@
                 return;
             }
 
-
             // Determine next subgrid
-            if (!bigBoardState[sr][sc]) {
+            if (bigBoardState[sr][sc] === null) { // If the target big cell is NOT won/drawn
                 nextSubgrid = [sr, sc];
             } else {
                 nextSubgrid = null; // allow any free subgrid if targeted one is blocked
             }
-
 
             currentPlayer = 1 - currentPlayer;
             renderNames();
@@ -591,7 +551,6 @@
             if (currentPlayer === 1) {
                 setTimeout(botMove, 100); // small delay to simulate thinking
             }
-
         }
 
         function findCell(r, c) {
@@ -602,7 +561,7 @@
             [...bigBoardDiv.children].forEach(cell => {
                 const r = +cell.dataset.row, c = +cell.dataset.col;
                 cell.classList.remove('active-subgrid');
-                if (!bigBoardState[r][c] &&
+                if (bigBoardState[r][c] === null && // Only highlight if not won/drawn
                     (!nextSubgrid || (nextSubgrid[0] === r && nextSubgrid[1] === c))) {
                     cell.classList.add('active-subgrid');
                 }
@@ -623,18 +582,30 @@
             return subgrid.every(row => row.every(cell => cell !== null));
         }
 
+        // New helper function for checking if a board (sub or big) is completely full
+        // This is used within the AI to check for draws on the big board.
+        function isBoardFull(board) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    // If any cell is null, it's not full. 'X', 'O', or 'draw' means it's occupied.
+                    if (board[r][c] === null) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         function botMove() {
             let moves = [];
 
-
             for (let br = 0; br < 3; br++) {
                 for (let bc = 0; bc < 3; bc++) {
-                    if (bigBoardState[br][bc]) continue;
+                    if (bigBoardState[br][bc] !== null) continue; // Skip if already won or drawn
                     if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) continue;
                     for (let sr = 0; sr < 3; sr++) {
                         for (let sc = 0; sc < 3; sc++) {
-                            if (!subBoardStates[br][bc][sr][sc]) {
+                            if (subBoardStates[br][bc][sr][sc] === null) {
                                 moves.push({ br, bc, sr, sc });
                             }
                         }
@@ -649,14 +620,17 @@
             if (difficulty === 'easy') {
                 choice = moves[Math.floor(Math.random() * moves.length)];
             } else if (difficulty === 'medium') {
-                choice = findBestMoveMedium(moves) || moves[Math.floor(Math.random() * moves.length)];
+                choice = findBestMoveMedium(moves);
             } else if (difficulty === 'hard') {
-                choice = findBestMoveHard(moves) || moves[Math.floor(Math.random() * moves.length)];
+                choice = findBestMoveHard(moves);
             }
 
+            // Fallback to a random move if no strategic move is found (shouldn't happen often for hard)
+            if (!choice) {
+                choice = moves[Math.floor(Math.random() * moves.length)];
+            }
 
-            if (!choice) return;
-
+            // Simulate click to trigger game logic
             const cell = [...bigBoardDiv.children].find(el =>
                 +el.dataset.row === choice.br && +el.dataset.col === choice.bc
             );
@@ -667,77 +641,335 @@
             subcell.click();
         }
 
+
         function findBestMoveMedium(moves) {
-            const myMark = currentPlayer === 1 ? 'O' : 'X';
-            const opponentMark = currentPlayer === 1 ? 'X' : 'O';
+            const myMark = currentPlayer === 1 ? PLAYER_O : PLAYER_X; // Bot is O
+            const opponentMark = currentPlayer === 1 ? PLAYER_X : PLAYER_O;
 
-            for (let mark of [myMark, opponentMark]) {
-                for (let move of moves) {
-                    const { br, bc, sr, sc } = move;
-                    const subgrid = subBoardStates[br][bc].map(row => [...row]);
-                    subgrid[sr][sc] = mark;
-
-                    if (checkWin(subgrid, mark)) {
-                        return move;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        function findBestMoveHard(moves) {
-            const mark = currentPlayer === 1 ? 'O' : 'X';
-            const opponent = currentPlayer === 1 ? 'X' : 'O';
-
-            let bestScore = -Infinity;
-            let bestMove = null;
+            let winningMove = null;
+            let blockingMove = null;
+            let sendToWonOrDrawMove = null;
+            let centerMove = null;
+            let cornerMove = null;
 
             for (let move of moves) {
                 const { br, bc, sr, sc } = move;
 
-                // Clone the current subgrid
-                const clone = subBoardStates[br][bc].map(row => [...row]);
-                clone[sr][sc] = mark;
+                // 1. Check for immediate win in current subgrid
+                const subgridClone = subBoardStates[br][bc].map(row => [...row]);
+                subgridClone[sr][sc] = myMark;
+                if (checkWin(subgridClone, myMark)) {
+                    winningMove = move;
+                    break; // Take the win immediately
+                }
 
-                const score = minimax(clone, 0, false, mark, opponent);
+                // 2. Check for immediate block in current subgrid
+                const subgridCloneOpponent = subBoardStates[br][bc].map(row => [...row]);
+                subgridCloneOpponent[sr][sc] = opponentMark;
+                if (checkWin(subgridCloneOpponent, opponentMark)) {
+                    blockingMove = move;
+                }
+
+                // 3. Check if sending opponent to an already won/drawn big cell
+                const nextBigRow = sr;
+                const nextBigCol = sc;
+                if (bigBoardState[nextBigRow][nextBigCol] !== null) { // null includes 'draw'
+                    sendToWonOrDrawMove = move;
+                }
+
+                // 4. Prefer center of current subgrid
+                if (sr === 1 && sc === 1 && subBoardStates[br][bc][sr][sc] === null) {
+                    centerMove = move;
+                }
+
+                // 5. Prefer corners of current subgrid
+                if (subBoardStates[br][bc][sr][sc] === null &&
+                    ((sr === 0 && sc === 0) || (sr === 0 && sc === 2) ||
+                        (sr === 2 && sc === 0) || (sr === 2 && sc === 2))) {
+                    cornerMove = move;
+                }
+            }
+
+            if (winningMove) return winningMove;
+            if (blockingMove) return blockingMove;
+            if (sendToWonOrDrawMove) return sendToWonOrDrawMove;
+            if (centerMove) return centerMove;
+            if (cornerMove) return cornerMove;
+
+            // Fallback to random if no strategic move found
+            return moves[Math.floor(Math.random() * moves.length)];
+        }
+
+
+        function findBestMoveHard(moves) {
+            const aiMark = currentPlayer === 1 ? PLAYER_O : PLAYER_X; // Bot is O
+            const humanMark = currentPlayer === 1 ? PLAYER_X : PLAYER_O;
+
+            let bestScore = -Infinity;
+            let bestMove = null;
+
+            // Iterate through all possible moves
+            for (let move of moves) {
+                // Create a deep clone of the current game state for simulation
+                const simulatedBigBoardState = bigBoardState.map(row => [...row]);
+                const simulatedSubBoardStates = subBoardStates.map(bigRow =>
+                    bigRow.map(bigCol =>
+                        bigCol.map(subRow => [...subRow])
+                    )
+                );
+
+                // Apply the move to the simulated state
+                simulatedSubBoardStates[move.br][move.bc][move.sr][move.sc] = aiMark;
+
+                // Update simulated big board state if subgrid is won/drawn
+                if (checkWin(simulatedSubBoardStates[move.br][move.bc], aiMark)) {
+                    simulatedBigBoardState[move.br][move.bc] = aiMark;
+                } else if (isFullSubgrid(simulatedSubBoardStates[move.br][move.bc])) {
+                    // Check for subgrid draw
+                    let tempSubgridWon = false;
+                    for (let pMark of [PLAYER_X, PLAYER_O]) {
+                        if (checkWin(simulatedSubBoardStates[move.br][bc], pMark)) {
+                            tempSubgridWon = true;
+                            break;
+                        }
+                    }
+                    if (!tempSubgridWon) {
+                        simulatedBigBoardState[move.br][move.bc] = 'draw'; // Use 'draw' as per user's script
+                    }
+                }
+
+                // Determine the next subgrid for the opponent
+                let simulatedNextSubgrid = [move.sr, move.sc];
+                if (simulatedBigBoardState[simulatedNextSubgrid[0]][simulatedNextSubgrid[1]] !== null) { // If the next subgrid is already won or drawn
+                    simulatedNextSubgrid = null; // Opponent can choose any available
+                }
+
+                // Create the simulated game state object
+                const simulatedGameState = {
+                    bigBoard: simulatedBigBoardState,
+                    subBoards: simulatedSubBoardStates,
+                    nextSubgrid: simulatedNextSubgrid
+                };
+
+                // Call minimax for the opponent's turn (isMaximizing = false)
+                const score = minimax(simulatedGameState, 0, false, aiMark, humanMark, -Infinity, Infinity);
 
                 if (score > bestScore) {
                     bestScore = score;
                     bestMove = move;
                 }
             }
-
-            return bestMove;
+            return bestMove || moves[Math.floor(Math.random() * moves.length)]; // Fallback
         }
 
-        function minimax(board, depth, isMaximizing, aiMark, humanMark) {
-            if (checkWin(board, aiMark)) return 10 - depth;
-            if (checkWin(board, humanMark)) return depth - 10;
-            if (isFull(board)) return 0;
 
-            let best = isMaximizing ? -Infinity : Infinity;
+        function minimax(gameState, depth, isMaximizingPlayer, aiMark, humanMark, alpha, beta) {
+            const currentMark = isMaximizingPlayer ? aiMark : humanMark;
+            const opponentMark = isMaximizingPlayer ? humanMark : aiMark;
 
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 3; c++) {
-                    if (!board[r][c]) {
-                        board[r][c] = isMaximizing ? aiMark : humanMark;
-                        const score = minimax(board, depth + 1, !isMaximizing, aiMark, humanMark);
-                        board[r][c] = null;
-                        best = isMaximizing ? Math.max(best, score) : Math.min(best, score);
+            // Base Cases:
+            // 1. Check for big board win/loss
+            if (checkWin(gameState.bigBoard, aiMark)) {
+                return 1000 - depth; // AI wins, higher score for quicker win
+            }
+            if (checkWin(gameState.bigBoard, humanMark)) {
+                return depth - 1000; // Human wins, lower score for quicker loss
+            }
+
+            // 2. Check for big board draw
+            if (isBoardFull(gameState.bigBoard)) { // Use the new isBoardFull
+                let bigBoardWon = false;
+                for (let pMark of [PLAYER_X, PLAYER_O]) {
+                    if (checkWin(gameState.bigBoard, pMark)) {
+                        bigBoardWon = true;
+                        break;
+                    }
+                }
+                if (!bigBoardWon) {
+                    return 0; // Draw
+                }
+            }
+
+            // 3. Depth limit for recursion (to control computation time)
+            const MAX_DEPTH = 4; // Increased depth slightly for better hard mode
+            if (depth >= MAX_DEPTH) {
+                return evaluateBoard(gameState, aiMark, humanMark);
+            }
+
+            // Get available moves for the current player
+            const availableMoves = getAvailableMovesForMinimax(gameState);
+
+            if (availableMoves.length === 0) {
+                // No moves left, consider it a draw if no winner
+                return 0;
+            }
+
+            if (isMaximizingPlayer) {
+                let bestScore = -Infinity;
+                for (let move of availableMoves) {
+                    const newGameState = applyMoveToGameState(gameState, move, currentMark);
+                    const score = minimax(newGameState, depth + 1, false, aiMark, humanMark, alpha, beta);
+                    bestScore = Math.max(bestScore, score);
+                    alpha = Math.max(alpha, bestScore);
+                    if (beta <= alpha) {
+                        break; // Alpha-beta pruning
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let move of availableMoves) {
+                    const newGameState = applyMoveToGameState(gameState, move, currentMark);
+                    const score = minimax(newGameState, depth + 1, true, aiMark, humanMark, alpha, beta);
+                    bestScore = Math.min(bestScore, score);
+                    beta = Math.min(beta, bestScore);
+                    if (beta <= alpha) {
+                        break; // Alpha-beta pruning
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+
+        function getAvailableMovesForMinimax(gameState) {
+            let moves = [];
+            for (let br = 0; br < 3; br++) {
+                for (let bc = 0; bc < 3; bc++) {
+                    // If a specific subgrid is required, only consider moves within it
+                    if (gameState.nextSubgrid && (gameState.nextSubgrid[0] !== br || gameState.nextSubgrid[1] !== bc)) continue;
+                    // If the big cell is already won or drawn, skip it
+                    if (gameState.bigBoard[br][bc] !== null) continue; // Only skip if it's won/drawn, not if it's just a subgrid that's full but not won
+
+                    for (let sr = 0; sr < 3; sr++) {
+                        for (let sc = 0; sc < 3; sc++) {
+                            if (gameState.subBoards[br][bc][sr][sc] === null) {
+                                moves.push({ br, bc, sr, sc });
+                            }
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+
+
+        function applyMoveToGameState(originalGameState, move, mark) {
+            // Deep clone the state
+            const newBigBoard = originalGameState.bigBoard.map(row => [...row]);
+            const newSubBoards = originalGameState.subBoards.map(bigRow =>
+                bigRow.map(bigCol =>
+                    bigCol.map(subRow => [...subRow])
+                )
+            );
+
+            // Apply the move
+            newSubBoards[move.br][move.bc][move.sr][move.sc] = mark;
+
+            // Update newBigBoard based on subgrid win/draw
+            if (checkWin(newSubBoards[move.br][move.bc], mark)) {
+                newBigBoard[move.br][move.bc] = mark;
+            } else if (isFullSubgrid(newSubBoards[move.br][move.bc])) {
+                let tempSubgridWon = false;
+                for (let pMark of [PLAYER_X, PLAYER_O]) {
+                    if (checkWin(newSubBoards[move.br][move.bc], pMark)) {
+                        tempSubgridWon = true;
+                        break;
+                    }
+                }
+                if (!tempSubgridWon) {
+                    newBigBoard[move.br][move.bc] = 'draw';
+                }
+            }
+
+            // Determine the next subgrid for the *next* player
+            let newNextSubgrid = [move.sr, move.sc];
+            if (newBigBoard[newNextSubgrid[0]][newNextSubgrid[1]] !== null) { // If the next subgrid is already won or drawn
+                newNextSubgrid = null; // The next player can choose any available
+            }
+
+            return {
+                bigBoard: newBigBoard,
+                subBoards: newSubBoards,
+                nextSubgrid: newNextSubgrid
+            };
+        }
+
+
+        function evaluateBoard(gameState, aiMark, humanMark) {
+            let score = 0;
+
+            // Evaluate big board lines
+            score += evaluateLines(gameState.bigBoard, aiMark, humanMark, 100); // Higher weight for big board lines
+
+            // Evaluate each subgrid
+            for (let br = 0; br < 3; br++) {
+                for (let bc = 0; bc < 3; bc++) {
+                    const subgridStatus = gameState.bigBoard[br][bc];
+                    if (subgridStatus === aiMark) {
+                        score += 50; // AI won this subgrid
+                    } else if (subgridStatus === humanMark) {
+                        score -= 50; // Human won this subgrid
+                    } else if (subgridStatus === 'draw') { // Check for 'draw' as per user's script
+                        // Neutral for draw, but can be strategic if opponent is sent here
+                    } else {
+                        // If subgrid is still active, evaluate its internal state
+                        score += evaluateLines(gameState.subBoards[br][bc], aiMark, humanMark, 5); // Lower weight for subgrid lines
                     }
                 }
             }
 
-            return best;
+            // Strategic advantage: sending opponent to a won/drawn subgrid
+            if (gameState.nextSubgrid) {
+                const [nextBr, nextBc] = gameState.nextSubgrid;
+                if (gameState.bigBoard[nextBr][nextBc] === aiMark) {
+                    score += 30; // Opponent sent to AI's won subgrid
+                } else if (gameState.bigBoard[nextBr][nextBc] === 'draw') { // Check for 'draw'
+                    score += 20; // Opponent sent to a drawn subgrid
+                }
+            } else {
+                // If nextSubgrid is null, player can choose any. This is generally good for the player whose turn it is.
+                // No specific bonus/penalty here, as it depends on the best move chosen.
+            }
+
+            // Center control on big board
+            if (gameState.bigBoard[1][1] === aiMark) score += 25;
+            if (gameState.bigBoard[1][1] === humanMark) score -= 25;
+
+            return score;
         }
 
-        function isFull(board) {
-            return board.every(row => row.every(cell => cell));
+
+        function evaluateLines(board, playerMark, opponentMark, weight) {
+            let lineScore = 0;
+
+            for (const combination of WINNING_COMBINATIONS) {
+                let playerCount = 0;
+                let opponentCount = 0;
+                let emptyCount = 0;
+
+                for (const [r, c] of combination) {
+                    if (board[r][c] === playerMark) {
+                        playerCount++;
+                    } else if (board[r][c] === opponentMark) {
+                        opponentCount++;
+                    } else if (board[r][c] === null) {
+                        emptyCount++;
+                    }
+                }
+
+                if (playerCount === 2 && emptyCount === 1) {
+                    lineScore += 10 * weight; // Two in a row, one empty for player
+                } else if (opponentCount === 2 && emptyCount === 1) {
+                    lineScore -= 10 * weight; // Two in a row, one empty for opponent (block opportunity)
+                } else if (playerCount === 1 && emptyCount === 2) {
+                    lineScore += 1 * weight; // One in a row, two empty for player
+                } else if (opponentCount === 1 && emptyCount === 2) {
+                    lineScore -= 1 * weight; // One in a row, two empty for opponent
+                }
+            }
+            return lineScore;
         }
-
-
     </script>
-
 </body>
 </html>
