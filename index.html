@@ -333,6 +333,12 @@
             left: 5%;
             font-size: 2rem; /* same as h1 or adjust */
         }
+
+        .your-container {
+            height: calc(var(--vh, 1vh) * 100);
+        }
+
+
     </style>
 </head>
 <body>
@@ -419,6 +425,10 @@
     </div>
 
     <script>
+
+        const height = window.innerHeight;
+        document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
+
         const setupDiv = document.getElementById('setup');
         const gameDiv = document.getElementById('game');
         const playBtn = document.getElementById('playBtn');
