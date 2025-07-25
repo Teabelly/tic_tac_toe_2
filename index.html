@@ -6,7 +6,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_back" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_backrefreshlock" rel="stylesheet">
 
     <link rel="manifest" href="/tic_tac_toe_2/manifest.json">
 
@@ -349,7 +349,8 @@
 
         <div><button id="playLocalButton" class="button">Local</button></div>
         <div><button onclick="window.location.href='vs_computer.html';" id="playComputerButton" class="button"> <i>vs</i> computer </button></div>
-        <div><button id="playOnlineButton" class="button">Online</button></div>
+        <div><button id="playOnlineButton" class="button">
+            <span class="material-symbols-outlined">lock</span> Online</button></div>
 
 
 
@@ -412,9 +413,13 @@
         <div id="winOverlay">
         </div>
 
-        <div id="winMessage">
+        <div id="winMessage" style="display:none;">
 
             <h1 id="winMessageh1"> </h1>
+
+            <button id="resetBtn" class="button">
+                <span class="material-symbols-outlined">refresh</span> Rematch
+            </button>
 
         </div>
 
@@ -441,6 +446,7 @@
         const howToPlayButton = document.getElementById('howToPlayButton');
         const instructionsDiv = document.getElementById('instructions')
         const winmessage = document.getElementById('winMessageh1')
+        const winmessageDIV = document.getElementById('winMessage')
         const instructionBack = document.getElementById('instruction_back')
         
 
@@ -493,6 +499,38 @@
             highlightNextSubgrid();
         });
 
+        document.getElementById('resetBtn').addEventListener('click', () => {
+
+
+            // Reset game state
+            bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null));
+            subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
+                Array(3).fill(0).map(() => Array(3).fill(null))
+            ));
+            nextSubgrid = null;
+            currentPlayer = Math.floor(Math.random() * 2);
+
+            // Reset UI
+            bigBoardDiv.innerHTML = '';
+            winmessage.innerHTML = '';
+            document.getElementById('winOverlay').innerHTML = '';
+            document.getElementById('winOverlay').style.display = 'none';
+
+            winmessageDIV.style.display = 'none';
+
+            // Re-render board and names
+            renderNames();
+            createBoard();
+            highlightNextSubgrid();
+
+            // Enable board interactions
+            gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = '');
+
+            // Optionally trigger bot if bot starts
+            if (currentPlayer === 1) {
+                setTimeout(botMove, 100);
+            }
+        });
 
         function showWinAnimation(winner) {
             const overlay = document.getElementById('winOverlay');
@@ -621,6 +659,8 @@
 
             // Check if big grid is won
             if (checkWin(bigBoardState, mark)) {
+
+                winmessageDIV.style.display = 'block';
 
                 // alert(`${players[currentPlayer]} wins the game!`);
                 showWinAnimation(players[currentPlayer]);

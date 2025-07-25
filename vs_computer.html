@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_back" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&text=helpundoarrow_backrefresh" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <meta charset="UTF-8">
@@ -311,6 +311,40 @@
             left: 5%;
             font-size: 2rem; /* same as h1 or adjust */
         }
+
+        .color-button {
+            background-color: #3b3b3b;
+            color: white;
+            border: none;
+            width: 10%;
+            max-width: 300px;
+            font-size: 2vw;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5%;
+            display: inline-block;
+            outline: none;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px #999;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .orange {
+            background-color: orange;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .gray {
+            background-color: gray !important;
+        }
+
     </style>
 </head>
 <body>
@@ -319,17 +353,28 @@
         <h2>Player Name:</h2>
         <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
         <div>
-            <label for="difficulty">Difficulty:</label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
+
+
+            <div style="display:none;">
+
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+
+            </div>
+
+            <button class="color-button green" data-value="easy">Easy</button>
+            <button class="color-button orange" data-value="medium">Medium</button>
+            <button class="color-button red" data-value="hard">Hard</button>
+
         </div>
         <div><button id="playBtn" class="button">Play</button></div>
     </div>
 
     <div id="game" class="hidden">
+
         <div class="players">
             <span id="name1"></span> &nbsp; (X) &nbsp; &nbsp; <i>vs</i> &nbsp; &nbsp; <span id="name2"></span> &nbsp; (O)
         </div>
@@ -340,8 +385,14 @@
         <div class="board" id="bigBoard"></div>
         <div id="winOverlay">
         </div>
-        <div id="winMessage">
+        <div id="winMessage" style="display:none;">
+
             <h1 id="winMessageh1"> </h1>
+
+            <button id="resetBtn" class="color-button green" >
+                <span class="material-symbols-outlined">refresh</span> Rematch
+            </button>
+
         </div>
     </div>
 
@@ -354,6 +405,7 @@
         const name2Span = document.getElementById('name2');
         const bigBoardDiv = document.getElementById('bigBoard');
         const winmessage = document.getElementById('winMessageh1')
+        const winmessageDiv = document.getElementById('winMessage')
         const instructionBack = document.getElementById('instruction_back')
 
         // Game State Variables
@@ -402,6 +454,59 @@
                 setTimeout(botMove, 100); // Small delay for bot's first move
             }
         });
+
+        const buttons = document.querySelectorAll('.color-button');
+        const select = document.getElementById('difficulty');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Reset all buttons to original color
+                buttons.forEach(btn => {
+                    btn.classList.remove('gray');
+                });
+
+                // Set clicked button to gray
+                button.classList.add('gray');
+
+                // Update the select dropdown
+                const value = button.getAttribute('data-value');
+                select.value = value;
+            });
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+
+            
+            // Reset game state
+            bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null));
+            subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
+                Array(3).fill(0).map(() => Array(3).fill(null))
+            ));
+            nextSubgrid = null;
+            currentPlayer = Math.floor(Math.random() * 2);
+
+            // Reset UI
+            bigBoardDiv.innerHTML = '';
+            winmessage.innerHTML = '';
+            document.getElementById('winOverlay').innerHTML = '';
+            document.getElementById('winOverlay').style.display = 'none';
+
+            winmessageDiv.style.display = 'none';
+
+            // Re-render board and names
+            renderNames();
+            createBoard();
+            highlightNextSubgrid();
+
+            // Enable board interactions
+            gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = '');
+
+            // Optionally trigger bot if bot starts
+            if (currentPlayer === 1) {
+                setTimeout(botMove, 100);
+            }
+        });
+
 
         function showWinAnimation(winner) {
             const overlay = document.getElementById('winOverlay');
@@ -531,6 +636,9 @@
             }
 
             if (checkWin(bigBoardState, mark)) {
+
+                winmessageDiv.style.display = 'block';
+
                 showWinAnimation(players[currentPlayer]);
                 winmessage.innerHTML = `${players[currentPlayer]} won!`;
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
