@@ -313,12 +313,13 @@
         }
 
         .color-button {
+            padding: 10px;
             background-color: #3b3b3b;
             color: white;
             border: none;
-            width: 10%;
+            width: 20%;
             max-width: 300px;
-            font-size: 2vw;
+            font-size: 3vw;
             padding: 10px;
             text-align: center;
             border-radius: 5%;
@@ -350,8 +351,8 @@
 <body>
     <div id="setup">
         <span onclick="window.location.href='index.html';" id="instruction_back" class="material-symbols-outlined arrow-icon">arrow_back</span>
-        <h2>Player Name:</h2>
-        <div><input type="text" id="player1" placeholder="Player 1 (X)"></div>
+        <h2 style="margin-bottom: 5%;">Player Name:</h2>
+        <div style="margin-bottom: 10%;"><input type="text" id="player1" placeholder="Player 1 (X)"></div>
         <div>
 
 
@@ -364,11 +365,11 @@
                 </select>
 
             </div>
-
-            <button class="color-button green" data-value="easy">Easy</button>
-            <button class="color-button orange" data-value="medium">Medium</button>
-            <button class="color-button red" data-value="hard">Hard</button>
-
+            <div style="margin-bottom: 10%;">
+                <button class="color-button green" data-value="easy">Easy</button>
+                <button class="color-button orange" data-value="medium">Medium</button>
+                <button class="color-button red" data-value="hard">Hard</button>
+            </div>
         </div>
         <div><button id="playBtn" class="button">Play</button></div>
     </div>
