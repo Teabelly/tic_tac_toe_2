@@ -382,7 +382,7 @@
 <body>
 
     <div class="title">
-        <img class="header-image" src="images/logo.png" alt="wombatLogoXO">
+        <img id="logoImage" class="header-image" src="images/logo.png" alt="wombatLogoXO">
         <h1 style="color: #36454F; "> [tic tac toe] <sup>2</sup> </h1>
         
     </div>
@@ -498,6 +498,8 @@
         const winmessageDIV = document.getElementById('winMessage')
         const instructionBack = document.getElementById('instruction_back')
 
+        const imageElement = document.getElementById('logoImage');
+
 
 
         let players = [];
@@ -511,6 +513,9 @@
         instructionBack.addEventListener('click', () => {
 
             instructionsDiv.style.display = "none";
+
+            imageElement.src = 'images/logo.png';
+            imageElement.style.width = "25%";
 
 
             menu_mainDiv.classList.remove('hidden');
@@ -533,6 +538,8 @@
             menu_mainDiv.classList.add('hidden');
             menu_mainDiv.style.display = "none";
             setupDiv.classList.remove('hidden');
+            imageElement.src = 'images/logo_vs.png';
+            imageElement.style.width = "55%";
 
         });
 
