@@ -18,13 +18,29 @@
     <title> [tic tac toe]2 </title>
     <style>
 
-        html, body, .container {
+        html, body {
             width: 100vw;
             height: 100vh;
             margin: 0;
             padding: 0;
             overflow: auto;
+            background-color: #f7f3f2ff;
         }
+
+
+
+        .container {
+            background-color: #fdfcfcff;
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Added subtle shadow */
+            text-align: center;
+            max-width: 95%;
+            width: 400px;
+            margin-bottom: 2%;
+        }
+
+
 
         body {
             font-family: sans-serif;
@@ -45,10 +61,10 @@
             color: inherit;
         }
 
-            .players span::selection {
-                background: transparent;
-                color: inherit;
-            }
+        .players span::selection {
+            background: transparent;
+            color: inherit;
+        }
 
 
         #darkModeToggle {
@@ -87,20 +103,20 @@
             aspect-ratio: 1;
         }
 
-            .cell .winner-mark {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 10vmin;
-                color: rgba(0,0,0,0.2);
-                pointer-events: none;
-                font-size: 30vmin;
-            }
+        .cell .winner-mark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10vmin;
+            color: rgba(0,0,0,0.2);
+            pointer-events: none;
+            font-size: 30vmin;
+        }
 
 
         .subcell {
@@ -134,22 +150,22 @@
             color: #999;
         }
 
-            body.dark-mode .cell {
-                background-color: #222;
-                border-color: #666;
-            }
+        body.dark-mode .cell {
+            background-color: #222;
+            border-color: #666;
+        }
 
-            body.dark-mode .subcell {
-                border-color: #444;
-            }
+        body.dark-mode .subcell {
+            border-color: #444;
+        }
 
-            body.dark-mode .highlight {
-                color: #eee;
-            }
+        body.dark-mode .highlight {
+            color: #eee;
+        }
 
-            body.dark-mode .winner-mark {
-                color: rgba(255, 255, 255, 0.2);
-            }
+        body.dark-mode .winner-mark {
+            color: rgba(255, 255, 255, 0.2);
+        }
 
 
 
@@ -162,11 +178,11 @@
         }
 
 
-            .switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
         /* The slider */
         .slider {
@@ -180,26 +196,26 @@
             transition: 0.4s;
         }
 
-            /* Rounded slider */
-            .slider.round {
-                border-radius: 34px;
-            }
+        /* Rounded slider */
+        .slider.round {
+            border-radius: 34px;
+        }
 
-                .slider.round:before {
-                    position: absolute;
-                    content: "☀";
-                    height: 18px;
-                    width: 18px;
-                    left: 3px;
-                    bottom: 3px;
-                    background-color: white;
-                    transition: 0.4s;
-                    border-radius: 50%;
-                    text-align: center;
-                    line-height: 18px;
-                    font-size: 12px;
-                    color: black;
-                }
+        .slider.round:before {
+            position: absolute;
+            content: "☀";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            color: black;
+        }
 
         input:checked + .slider:before {
             transform: translateX(26px);
@@ -214,9 +230,9 @@
             background-color: #2196F3;
         }
 
-            input:checked + .slider:before {
-                transform: translateX(26px);
-            }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
 
         #darkModeSwitch {
             position: absolute;
@@ -231,29 +247,33 @@
 
 
         #menu_main {
-            margin-bottom: 10px;
-            width: 100vw; /* 70% of the viewport width */
+            margin-bottom: 10%;
+            margin-top: 10%;
+            width: 80vw; /* 70% of the viewport width */
+
+            display: block;
             max-width: 100%; /* don’t exceed the screen */
-            margin: 0 auto; /* center horizontally */
-            box-sizing: border-box; /* include padding/border in width */
-            padding: 4rem; /* some inner space */
+            margin: auto auto; /* center horizontally */
+            align-items: center;
+            align-content: center;
         }
 
-            #menu_main > div {
-                margin-bottom: 1rem; /* spacing between children */
-                font-size: 100%;
-            }
+        #menu_main > div {
+            margin-bottom: 2rem; /* spacing between children */
+            margin-top: 1rem; /* spacing between children */
+            font-size: 100%;
+        }
 
         .button {
-            background-color: #3b3b3b;
-            color: white;
+            background-color: #4c4c4cff;
+            color: floralwhite;
             border: none;
-            width: 40%;
+            width: 80%;
             max-width: 300px;
             font-size: 4vw;
             padding: 10px;
             text-align: center;
-            border-radius: 5%;
+            border-radius: 7%;
             display: inline-block;
             outline: none;
             border: none;
@@ -261,15 +281,15 @@
             box-shadow: 0 5px #999;
         }
 
-            .button:active {
-                background-color: #262626;
-                box-shadow: 0 5px #666;
-                transform: translateY(4px);
-            }
+        .button:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
 
-            .button:hover {
-                background-color: #262626
-            }
+        .button:hover {
+            background-color: #262626
+        }
 
 
         .button_unactive {
@@ -288,11 +308,11 @@
             box-shadow: 0 5px #999;
         }
 
-            .button_unactive:active {
-                background-color: #262626;
-                box-shadow: 0 5px #666;
-                transform: translateY(4px);
-            }
+        .button_unactive:active {
+            background-color: #262626;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
 
 
         .material-symbols-outlined {
@@ -333,27 +353,33 @@
             left: 5%;
             font-size: 2rem; /* same as h1 or adjust */
         }
-
-        .your-container {
-            height: calc(var(--vh, 1vh) * 100);
+        ,
+        .title h1 {
+            color: #36454F;
         }
+
+
 
 
     </style>
 </head>
 <body>
 
-    <div id="menu_main">
+    <div class="title"> <h1 style="color: #36454F; "> [tic tac toe] <sup>2</sup> </h1> </div>
 
-        <div> <h1> [tic tac toe] <sup>2</sup> </h1> </div>
+    <div id="menu_main" class="container">
+
 
         <div><button id="playLocalButton" class="button">Player vs Player </button></div>
         <div><button onclick="window.location.href='vs_computer.html';" id="playComputerButton" class="button"> <i>vs</i> computer </button></div>
-        <div><button onclick="window.location.href='vs_online_v00p01.html';" id="playOnlineButton" class="button">
-            <span class="material-symbols-outlined">lock</span> Online</button></div>
         <div>
-            
-            
+            <button onclick="window.location.href='vs_online_v00p02.html';" id="playOnlineButton" class="button">
+                <span class="material-symbols-outlined">lock</span> Online
+            </button>
+        </div>
+        <div>
+
+
             <button id="howToPlayButton" class="button"> <span class="material-symbols-outlined"> help </span> How to play</button>
         </div>
 
@@ -447,7 +473,7 @@
         const winmessage = document.getElementById('winMessageh1')
         const winmessageDIV = document.getElementById('winMessage')
         const instructionBack = document.getElementById('instruction_back')
-        
+
 
 
         let players = [];
@@ -472,15 +498,16 @@
 
             instructionsDiv.style.display = "block";
 
+            // menu_mainDiv.classList.add('hidden');
+            menu_mainDiv.style.display = "none";
 
-            menu_mainDiv.classList.add('hidden');
-            
 
         });
 
         playLocalButton.addEventListener('click', () => {
 
             menu_mainDiv.classList.add('hidden');
+            menu_mainDiv.style.display = "none";
             setupDiv.classList.remove('hidden');
 
         });
@@ -617,6 +644,8 @@
                 }
             }
         }
+
+
 
         function handleMove(e) {
             const el = e.currentTarget;

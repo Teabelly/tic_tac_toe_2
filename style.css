@@ -1,0 +1,579 @@
+﻿
+
+
+/* Your existing CSS here, adapted for the username generator context */
+html, body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+body {
+    font-family: "Inter", sans-serif; /* Prefer Inter as per instructions */
+    /* background-image: url('background_v001p0.png');
+                background-size: cover; */
+
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f4f8; /* Light background */
+    color: #333;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Added subtle shadow */
+    text-align: center;
+    max-width: 95%;
+    width: 400px;
+    margin-bottom: 2%;
+}
+
+/* New styles for the username row */
+.username-info-row {
+    display: flex;
+    align-items: center; /* Vertically align items in the middle */
+    justify-content: center; /* Center content horizontally */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 0.5rem; /* Space between items */
+    margin-bottom: 1.5rem; /* Keep some space below this row */
+}
+
+    .username-info-row h1 {
+        font-size: 1rem; /* Adjust font size to fit in a row */
+        margin-bottom: 0; /* Remove default h1 margin */
+        white-space: nowrap; /* Prevent "Username:" from wrapping */
+        color: #1a202c; /* Ensure color is consistent */
+    }
+
+#usernameDisplay {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0; /* Remove default margin for inline element */
+    flex-grow: 1; /* Allow it to take available space */
+    text-align: left; /* Align text to left within its flex item */
+    min-height: 0.5rem; /* Ensure space even when loading */
+    display: flex; /* Use flex to center content vertically within its own space */
+    align-items: center;
+    justify-content: flex-start; /* Align text to start */
+    word-break: break-all; /* Prevent overflow for long names */
+}
+
+#usernameInfoDisplay {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0; /* Remove default margin for inline element */
+    flex-grow: 1; /* Allow it to take available space */
+    text-align: left; /* Align text to left within its flex item */
+    min-height: 0.5rem; /* Ensure space even when loading */
+    display: flex; /* Use flex to center content vertically within its own space */
+    align-items: center;
+    justify-content: flex-start; /* Align text to start */
+    word-break: break-all; /* Prevent overflow for long names */
+}
+
+.loading-text {
+    color: #6b7280;
+    font-style: italic;
+}
+
+
+
+/* New styles for copy button */
+.copy-button {
+    background-color: #69baceff; /* A lighter blue */
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer; /* Indicate it's clickable */
+    border: none;
+    outline: none;
+    display: flex; /* To center the icon */
+    align-items: center;
+    justify-content: center;
+}
+
+    .copy-button:hover {
+        background-color: #60a5fa;
+        transform: translateY(-1px);
+    }
+
+    .copy-button:active {
+        background-color: #69baceff;
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba[0, 0, 0, 0.1];
+    }
+
+    .copy-button .material-symbols-outlined {
+        font-size: 1.2rem; /* Adjust icon size */
+        line-height: 1; /* Ensure icon is centered */
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; /* Ensure icon style */
+    }
+
+.info-username {
+    background-color: #60a5fa; /* A lighter blue */
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    display: flex; /* To center the icon */
+    align-items: center;
+    justify-content: center;
+}
+
+.error-message {
+    color: #e53e3e; /* Red for errors */
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.success-message {
+    color: #38a169; /* Green for success */
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+
+/* Dark Mode styles (from original script, adapted) */
+body.dark-mode {
+    background-color: #111;
+    color: #999;
+}
+
+    body.dark-mode .container {
+        background-color: #222;
+        box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode h1 {
+        color: #eee;
+    }
+
+    body.dark-mode #usernameDisplay, body.dark-mode #onlineUsersCount, body.dark-mode .invite-item, body.dark-mode #matchStatus {
+        color: #ccc;
+    }
+
+    body.dark-mode .generate-button {
+        background-color: #3182ce;
+    }
+
+        body.dark-mode .generate-button:hover {
+            background-color: #2b6cb0;
+        }
+
+        body.dark-mode .generate-button:active {
+            background-color: #1a569d;
+        }
+
+    body.dark-mode .copy-button {
+        background-color: #3b82f6;
+    }
+
+        body.dark-mode .copy-button:hover {
+            background-color: #2563eb;
+        }
+
+        body.dark-mode .copy-button:active {
+            background-color: #1a569d;
+        }
+
+    body.dark-mode .loading-text {
+        color: #888;
+    }
+
+    body.dark-mode .error-message {
+        color: #f56565;
+    }
+
+    body.dark-mode .success-message {
+        color: #68d391;
+    }
+
+/* Dark mode toggle switch styles (from original script) */
+.switch {
+    position: absolute; /* Changed to absolute to position independently */
+    top: 1rem; /* Adjust as needed */
+    right: 1rem; /* Adjust as needed */
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    z-index: 10; /* Ensure it's above other content */
+}
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "☀";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 18px;
+        font-size: 12px;
+        color: black;
+    }
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+        content: "☾";
+        color: black;
+    }
+
+/* Material Symbols Icon settings */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+}
+
+/* Styles for online users count */
+#onlineUsersCount {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-top: 0.5rem; /* Adjust spacing as needed */
+}
+
+/* Styles for invite section */
+#inviteInput {
+    border: 1px solid #cbd5e0; /* Light gray border */
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    width: calc(100% - 70px); /* Adjust width to fit button */
+    margin-right: 0.5rem;
+    box-sizing: border-box; /* Include padding in width */
+    font-size: 1rem;
+    color: #333;
+}
+
+body.dark-mode #inviteInput {
+    background-color: #444;
+    border-color: #555;
+    color: #eee;
+}
+
+#sendInviteBtn {
+    background-color: #3db15eff; /* Green */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    #sendInviteBtn:hover {
+        background-color: #45a049;
+    }
+
+body.dark-mode #sendInviteBtn {
+    background-color: #48bb78;
+}
+
+    body.dark-mode #sendInviteBtn:hover {
+        background-color: #38a169;
+    }
+
+/* Styles for invite lists */
+.invite-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.invite-item {
+    background-color: #f0f4f8; /* Light background for items */
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    color: #333;
+    word-break: break-word; /* Ensure long usernames wrap */
+}
+
+body.dark-mode .invite-item {
+    background-color: #333;
+    color: #ccc;
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+}
+
+.invite-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+    .invite-actions button:hover {
+        transform: scale(1.1);
+    }
+
+.invite-actions .accept-btn {
+    color: #4CAF50; /* Green tick */
+}
+
+.invite-actions .reject-btn {
+    color: #e53e3e; /* Red cross */
+}
+
+.invite-actions .cancel-btn { /* NEW STYLE for cancel button */
+    color: #ff9800; /* Orange for cancel */
+}
+
+.invite-status-pending {
+    color: #6b7280; /* Gray for pending */
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* Styles for random match section */
+#randomMatchSection {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0; /* Separator line */
+}
+
+body.dark-mode #randomMatchSection {
+    border-color: #4a5568;
+}
+
+#findRandomGameBtn {
+    background-color: #b46463ff; /* Purple */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+    #findRandomGameBtn:hover {
+        background-color: #b46462ff;
+        transform: translateY(-1px);
+    }
+
+    #findRandomGameBtn:active {
+        background-color: #7D3C98;
+        transform: translateY(0);
+    }
+
+#matchStatus {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.match-loading {
+    color: #60a5fa; /* Blue for loading */
+    font-style: italic;
+}
+
+.match-found {
+    color: #38a169; /* Green for found */
+    font-weight: bold;
+}
+
+.match-error {
+    color: #e53e3e; /* Red for error */
+}
+
+
+.usernameInfoDisplay {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.hover-message {
+    visibility: hidden;
+    opacity: 0;
+    width: 200px; /* Adjust as needed */
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Still positions it above the icon */
+    /* *** MODIFIED PROPERTIES FOR LEFT ALIGNMENT *** */
+    left: 0; /* Align to the left edge of the parent */
+    margin-left: 0; /* Remove the negative margin */
+    /* ********************************************* */
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+    .hover-message::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* At the bottom of the tooltip */
+        /* *** MODIFIED PROPERTIES FOR LEFT-ALIGNED ARROW *** */
+        left: 10px; /* Adjust this value to position the arrow under the icon */
+        margin-left: 0; /* Remove the negative margin */
+        /* ************************************************* */
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent; /* Arrow pointing upwards */
+    }
+
+.usernameInfoDisplay:hover .hover-message {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Optional: Style for the info icon itself */
+.usernameInfoDisplay .material-symbols-outlined {
+    font-size: 24px;
+    color: #333;
+}
+
+.main-title {
+    width: 70vw; /* 70% of the viewport width */
+    margin: 0 auto; /* Center the div horizontally */
+    text-align: center; /* Center the text inside the div */
+    padding: 20px 0; /* Add some vertical padding */
+    border-bottom: 1px solid #ccc; /* Simple bottom border */
+    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+    .main-title h1 {
+        margin: 0; /* Remove default h1 margin */
+        font-size: 2.5em; /* Adjust font size as needed */
+        color: #333; /* Dark text color */
+    }
+
+.hidden {
+    display: none;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    width: 90vmin;
+    margin: auto;
+}
+
+
+.cell {
+    position: relative;
+    background: #eee;
+    border: 2px solid #000;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    aspect-ratio: 1;
+}
+
+    .cell .winner-mark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10vmin;
+        color: rgba(0,0,0,0.2);
+        pointer-events: none;
+        font-size: 30vmin;
+    }
+
+
+.subcell {
+    border: 1px solid #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 4vmin;
+    width: 100%;
+    height: 100%;
+}
+
+.active-subgrid {
+    background: #cfc;
+}
+
+body.dark-mode .active-subgrid {
+    box-shadow: 0 0 10px #999 inset;
+}
+
+
+
+.won {
+    background: #ccc;
+    pointer-events: none;
+}
+
+body.dark-mode {
+    background-color: #111;
+    color: #999;
+}
+
+    body.dark-mode .cell {
+        background-color: #222;
+        border-color: #666;
+    }
+
+    body.dark-mode .subcell {
+        border-color: #444;
+    }
+
+    body.dark-mode .highlight {
+        color: #eee;
+    }
+
+    body.dark-mode .winner-mark {
+        color: rgba(255, 255, 255, 0.2);
+    }
+
