@@ -259,8 +259,8 @@
         }
 
         #menu_main > div {
-            margin-bottom: 2rem; /* spacing between children */
-            margin-top: 1rem; /* spacing between children */
+            margin-bottom: 1.2rem; /* spacing between children */
+            margin-top: 0.7rem; /* spacing between children */
             font-size: 100%;
         }
 
@@ -357,7 +357,23 @@
         .title h1 {
             color: #36454F;
         }
+        .title {
+            /* This is the container for your title */
 
+
+            align-items: center; /* This centers the items vertically */
+            justify-content: center;
+            margin-top: 1px;
+            display: flex;
+            /* Change the direction of the flex container to vertical */
+            flex-direction: column;
+        }
+
+        .header-image {
+            /* This is the class for your image */
+            width: 25%; /* The image will take up 100% of its parent's width */
+            margin-bottom: 1px;
+        }
 
 
 
@@ -365,7 +381,15 @@
 </head>
 <body>
 
-    <div class="title"> <h1 style="color: #36454F; "> [tic tac toe] <sup>2</sup> </h1> </div>
+    <div class="title">
+        <img class="header-image" src="images/logo.png" alt="wombatLogoXO">
+        <h1 style="color: #36454F; "> [tic tac toe] <sup>2</sup> </h1>
+        
+    </div>
+
+ 
+
+    
 
     <div id="menu_main" class="container">
 
