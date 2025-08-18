@@ -512,12 +512,12 @@
 
         instructionBack.addEventListener('click', () => {
 
-            instructionsDiv.style.display = "none";
+            
 
             imageElement.src = 'images/logo.png';
             imageElement.style.width = "25%";
 
-
+            instructionsDiv.style.display = "none";
             menu_mainDiv.classList.remove('hidden');
 
 
@@ -535,10 +535,12 @@
 
         playLocalButton.addEventListener('click', () => {
 
+
+            imageElement.src = 'images/logo_vs.png';
             menu_mainDiv.classList.add('hidden');
             menu_mainDiv.style.display = "none";
             setupDiv.classList.remove('hidden');
-            imageElement.src = 'images/logo_vs.png';
+            
             imageElement.style.width = "55%";
 
         });
