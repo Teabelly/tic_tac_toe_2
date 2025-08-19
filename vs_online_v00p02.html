@@ -459,19 +459,24 @@
 			    font-size: 24px;
 			    color: #333;
 			}
-			
-			.main-title {
-			    width: 70vw; /* 70% of the viewport width */
-			    margin: 0 auto; /* Center the div horizontally */
-			    text-align: center; /* Center the text inside the div */
-			    padding: 20px 0; /* Add some vertical padding */
-			    border-bottom: 1px solid #ccc; /* Simple bottom border */
-			    box-sizing: border-box; /* Include padding in the width calculation */
-			}
+
+        .main-title {
+            width: 90vw; /* 70% of the viewport width */
+            text-align: center; /* Center the text inside the div */
+
+            box-sizing: border-box; /* Include padding in the width calculation */
+
+            align-items: center; /* This centers the items vertically */
+            justify-content: center;
+            margin-top: 15%;
+            display: flex;
+            /* Change the direction of the flex container to vertical */
+            flex-direction: column;
+        }
 			
 			.main-title h1 {
 			    margin: 0; /* Remove default h1 margin */
-			    font-size: 2.5em; /* Adjust font size as needed */
+			    font-size: 1em; /* Adjust font size as needed */
 			    color: #333; /* Dark text color */
 			}
 
@@ -582,21 +587,33 @@
             z-index: 1000;
         }
 
+        .header-image {
+            /* This is the class for your image */
+            width: 75%; /* The image will take up 100% of its parent's width */
+            margin-top: 11%;
+        }
+
     </style>
     
 </head>
 
 <body>
 
+    
+
     <div id="onlineMenu">
+
+
+
         <label class="switch" id="darkModeSwitch">
             <input type="checkbox" id="darkModeToggle">
             <span class="slider"></span>
         </label>
 
-        
+
 
         <div class="main-title">
+            <img id="logoImage" class="header-image" src="images/logo_online.png" alt="wombatLogoOnline">
             <h1> Play online v0.02 </h1>
         </div>
 
@@ -659,1071 +676,1071 @@
 
     </div>
 
-	<div id="game" class="hidden">
+    <div id="game" class="hidden">
 
-		<div class="players">
-			<span id="name1"></span> &nbsp;  (X)  &nbsp; &nbsp;  <i>vs</i> &nbsp;  &nbsp;  <span id="name2"></span>  &nbsp; (O)
-		</div>
-
-		
-
-		<div class="board" id="bigBoard"></div>
-
-		<div id="winOverlay"></div>
-
-		<div id="winMessage" style="display:none;">
-
-			<h1 id="winMessageh1"> </h1>
-
-			<button id="resetBtn" class="button">
-				<span class="material-symbols-outlined">refresh</span> Rematch
-			</button>
-
-		</div>
-
-	</div>
+        <div class="players">
+            <span id="name1"></span> &nbsp;  (X)  &nbsp; &nbsp;  <i>vs</i> &nbsp;  &nbsp;  <span id="name2"></span>  &nbsp; (O)
+        </div>
 
 
 
+        <div class="board" id="bigBoard"></div>
 
+        <div id="winOverlay"></div>
 
+        <div id="winMessage" style="display:none;">
 
-		<script type="module">
+            <h1 id="winMessageh1"> </h1>
 
+            <button id="resetBtn" class="button">
+                <span class="material-symbols-outlined">refresh</span> Rematch
+            </button>
 
+        </div>
 
-			// Firebase SDK Imports
-			import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-			import { getDatabase, ref, get, set, onValue, push, update, remove, onDisconnect, query, limitToFirst, orderByChild, runTransaction, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
-
-			// Your Firebase Configuration
-			const firebaseConfig = {
-				apiKey: "AIzaSyD-wIuod1HspD7ffLzqsJGlsBMoi1iujZ8",
-				authDomain: "tic-tac-toe-2-44691.firebaseapp.com",
-				projectId: "tic-tac-toe-2-44691",
-				storageBucket: "tic-tac-toe-2-44691.firebasestorage.app",
-				messagingSenderId: "947987116391",
-				appId: "1:947987116391:web:c2c64bc30fd0f810627fc2",
-				measurementId: "G-WDR5ZXGXQ7",
-				databaseURL: "https://tic-tac-toe-2-44691-default-rtdb.europe-west1.firebasedatabase.app"
-			};
-
-			// Initialize Firebase
-			const app = initializeApp(firebaseConfig);
-			const database = getDatabase(app);
-
-			// Firebase References
-			const usernameComponentsRef = ref(database, 'username_components');
-			const onlineUsersRef = ref(database, 'online_users');
-			const invitesRef = ref(database, 'invites');
-			const waitingRoomsRef = ref(database, 'waiting_rooms'); // NEW Firebase Ref
-
-            const gameRoomsRef = ref(database, 'game_rooms');
-
-
-			// DOM Elements
-			const usernameDisplay = document.getElementById('usernameDisplay');
-			const generateBtn = document.getElementById('generateBtn');
-			const errorMessage = document.getElementById('errorMessage');
-			const inviteMessage = document.getElementById('inviteMessage');
-			const sendInviteMessage = document.getElementById('sendInviteMessage');
-			const darkModeToggle = document.getElementById('darkModeToggle');
-			const onlineUsersCountDisplay = document.getElementById('onlineUsersCount');
-			const copyBtn = document.getElementById('copyBtn');
-
-			const inviteInput = document.getElementById('inviteInput');
-			const sendInviteBtn = document.getElementById('sendInviteBtn');
-			const sentInvitesList = document.getElementById('sentInvitesList');
-			const receivedInvitesList = document.getElementById('receivedInvitesList');
-
-			// NEW DOM elements for matchmaking
-			const findRandomGameBtn = document.getElementById('findRandomGameBtn');
-			const matchStatusDisplay = document.getElementById('matchStatus');
-
-			let currentUsername = null;
-			const localStorageKey = 'userGeneratedUsername';
-
-			const inviteOnDisconnectRefs = {};
-			let currentRoomRef = null; // NEW: To keep track of the room the current user is in
-            let playerNumber = null; // NEW: To store if the user is player1 or player2
-            let gameRoomName = null;
+    </div>
 
 
 
 
 
 
-
-			// maatch found elements
-
-			
-            const height = window.innerHeight;
-            document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
-
-            const onlineMenuDIV = document.getElementById('onlineMenu');
-            const gameDiv = document.getElementById('game');
-            const name1Span = document.getElementById('name1');
-            const name2Span = document.getElementById('name2');
-            const bigBoardDiv = document.getElementById('bigBoard');
-			const winmessage = document.getElementById('winMessageh1');
-			const winmessageDIV = document.getElementById('winMessage');
-
-            let players = [];
-            let currentPlayer = 0; // 0 or 1
-            let nextSubgrid = null; // [row, col] or null if any
-            let bigBoardState = Array(3).fill(0).map(() => Array(3).fill(0)); // 0 / 'X' / 'O'
-            let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
-                Array(3).fill(0).map(() => Array(3).fill(0))
-            ));
+    <script type="module">
 
 
 
-            const initialState = {
-                bigBoardState: bigBoardState,
-                subBoardStates: subBoardStates,
-                currentPlayer: 0,
-                nextSubgrid: null,
-                players: {
-                    player1: currentUsername,
-                    player2: null
+        // Firebase SDK Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, get, set, onValue, push, update, remove, onDisconnect, query, limitToFirst, orderByChild, runTransaction, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-wIuod1HspD7ffLzqsJGlsBMoi1iujZ8",
+            authDomain: "tic-tac-toe-2-44691.firebaseapp.com",
+            projectId: "tic-tac-toe-2-44691",
+            storageBucket: "tic-tac-toe-2-44691.firebasestorage.app",
+            messagingSenderId: "947987116391",
+            appId: "1:947987116391:web:c2c64bc30fd0f810627fc2",
+            measurementId: "G-WDR5ZXGXQ7",
+            databaseURL: "https://tic-tac-toe-2-44691-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Firebase References
+        const usernameComponentsRef = ref(database, 'username_components');
+        const onlineUsersRef = ref(database, 'online_users');
+        const invitesRef = ref(database, 'invites');
+        const waitingRoomsRef = ref(database, 'waiting_rooms'); // NEW Firebase Ref
+
+        const gameRoomsRef = ref(database, 'game_rooms');
+
+
+        // DOM Elements
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const generateBtn = document.getElementById('generateBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const inviteMessage = document.getElementById('inviteMessage');
+        const sendInviteMessage = document.getElementById('sendInviteMessage');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const onlineUsersCountDisplay = document.getElementById('onlineUsersCount');
+        const copyBtn = document.getElementById('copyBtn');
+
+        const inviteInput = document.getElementById('inviteInput');
+        const sendInviteBtn = document.getElementById('sendInviteBtn');
+        const sentInvitesList = document.getElementById('sentInvitesList');
+        const receivedInvitesList = document.getElementById('receivedInvitesList');
+
+        // NEW DOM elements for matchmaking
+        const findRandomGameBtn = document.getElementById('findRandomGameBtn');
+        const matchStatusDisplay = document.getElementById('matchStatus');
+
+        let currentUsername = null;
+        const localStorageKey = 'userGeneratedUsername';
+
+        const inviteOnDisconnectRefs = {};
+        let currentRoomRef = null; // NEW: To keep track of the room the current user is in
+        let playerNumber = null; // NEW: To store if the user is player1 or player2
+        let gameRoomName = null;
+
+
+
+
+
+
+
+        // maatch found elements
+
+
+        const height = window.innerHeight;
+        document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
+
+        const onlineMenuDIV = document.getElementById('onlineMenu');
+        const gameDiv = document.getElementById('game');
+        const name1Span = document.getElementById('name1');
+        const name2Span = document.getElementById('name2');
+        const bigBoardDiv = document.getElementById('bigBoard');
+        const winmessage = document.getElementById('winMessageh1');
+        const winmessageDIV = document.getElementById('winMessage');
+
+        let players = [];
+        let currentPlayer = 0; // 0 or 1
+        let nextSubgrid = null; // [row, col] or null if any
+        let bigBoardState = Array(3).fill(0).map(() => Array(3).fill(0)); // 0 / 'X' / 'O'
+        let subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
+            Array(3).fill(0).map(() => Array(3).fill(0))
+        ));
+
+
+
+        const initialState = {
+            bigBoardState: bigBoardState,
+            subBoardStates: subBoardStates,
+            currentPlayer: 0,
+            nextSubgrid: null,
+            players: {
+                player1: currentUsername,
+                player2: null
+            }
+        };
+
+        const EMPTY = 0;
+        const X = 1;
+        const O = 2;
+        const DRAW = 3;
+        let currentRoomName = null;
+
+
+
+
+
+
+        // --- Helper Functions for UI Messages ---
+        function hideMessage(element) {
+            element.classList.add('hidden');
+            element.textContent = '';
+            element.classList.remove('error-message', 'success-message', 'match-loading', 'match-found', 'match-error');
+        }
+
+        function showMessage(element, message, type = 'error') {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            element.classList.add(
+                type === 'success' ? 'success-message' :
+                    type === 'loading' ? 'match-loading' :
+                        type === 'found' ? 'match-found' :
+                            'error-message'
+            );
+            // Hide after a few seconds, unless it's a 'loading' or 'found' message
+            if (type !== 'loading' && type !== 'found') {
+                setTimeout(() => hideMessage(element), 5000);
+            }
+        }
+
+        function hideGeneralError() { hideMessage(errorMessage); }
+        function showGeneralError(message) { showMessage(errorMessage, message, 'error'); }
+
+        function hideInviteMessage() { hideMessage(inviteMessage); }
+        function showInviteMessage(message, type = 'error') { showMessage(inviteMessage, message, type); }
+
+        function hideSendInviteMessage() { hideMessage(sendInviteMessage); }
+        function showSendInviteMessage(message, type = 'error') { showMessage(sendInviteMessage, message, type); }
+
+        function hideMatchStatus() { hideMessage(matchStatusDisplay); }
+        function showMatchStatus(message, type = 'error') { showMessage(matchStatusDisplay, message, type); }
+
+
+
+        async function setOnlineStatus(username, oldUsername = null) {
+            if (!username) return;
+
+            // Remove old username's online status if it exists and is different
+            if (oldUsername && oldUsername !== username) {
+                const oldUserRef = ref(database, `online_users/${oldUsername.replace(/\s/g, '_')}`);
+                await set(oldUserRef, null).catch(error => console.error("Error removing old username's online status:", error));
+                console.log(`User ${oldUsername} is now offline.`);
+            }
+
+            const userRef = ref(database, `online_users/${username.replace(/\s/g, '_')}`);
+            try {
+                await set(userRef, true);
+                // Set up onDisconnect to remove this user from online_users
+                onDisconnect(userRef).remove();
+                console.log(`User ${username} is now online.`);
+            } catch (error) {
+                console.error("Error setting online status:", error);
+                showGeneralError(`Failed to set online status: ${error.message}`);
+            }
+        }
+
+
+        async function generateOrLoadUsername(forceNew = false) {
+            usernameDisplay.textContent = 'Loading username...';
+            usernameDisplay.classList.add('loading-text');
+            hideGeneralError();
+            hideInviteMessage();
+            hideSendInviteMessage();
+            hideMatchStatus(); // Clear match status on username change
+
+            let usernameFromLocalStorage = localStorage.getItem(localStorageKey);
+            let newUsername = null;
+
+            // Handle existing username cleanup for the *old* currentUsername, if any
+            if (currentUsername) {
+                // Cancel all onDisconnect operations for invites previously sent by this user
+                for (const inviteId in inviteOnDisconnectRefs) {
+                    if (inviteOnDisconnectRefs.hasOwnProperty(inviteId)) {
+                        await inviteOnDisconnectRefs[inviteId].cancel()
+                            .catch(err => console.error(`Error canceling onDisconnect for invite ${inviteId}:`, err));
+                    }
                 }
-            };
+                inviteOnDisconnectRefs = {}; // Clear the map
 
-            const EMPTY = 0;
-            const X = 1;
-            const O = 2;
-            const DRAW = 3;
-            let currentRoomName = null;
+                // Stop listening for all invites (the onValue listener)
+                // You'll need to store and manage the off() function if you want to stop listeners.
+                // For now, onValue listeners will be re-applied with the new username.
+                // You might need to add `off(ref(database, 'invites'))` here to be more explicit.
+                // off(invitesRef);
+                // Clear existing invites from UI for old user
+                sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
+                receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
 
-
-
-
-
-
-			// --- Helper Functions for UI Messages ---
-			function hideMessage(element) {
-				element.classList.add('hidden');
-				element.textContent = '';
-				element.classList.remove('error-message', 'success-message', 'match-loading', 'match-found', 'match-error');
-			}
-
-			function showMessage(element, message, type = 'error') {
-				element.textContent = message;
-				element.classList.remove('hidden');
-				element.classList.add(
-					type === 'success' ? 'success-message' :
-						type === 'loading' ? 'match-loading' :
-							type === 'found' ? 'match-found' :
-								'error-message'
-				);
-				// Hide after a few seconds, unless it's a 'loading' or 'found' message
-				if (type !== 'loading' && type !== 'found') {
-					setTimeout(() => hideMessage(element), 5000);
-				}
-			}
-
-			function hideGeneralError() { hideMessage(errorMessage); }
-			function showGeneralError(message) { showMessage(errorMessage, message, 'error'); }
-
-			function hideInviteMessage() { hideMessage(inviteMessage); }
-			function showInviteMessage(message, type = 'error') { showMessage(inviteMessage, message, type); }
-
-			function hideSendInviteMessage() { hideMessage(sendInviteMessage); }
-			function showSendInviteMessage(message, type = 'error') { showMessage(sendInviteMessage, message, type); }
-
-			function hideMatchStatus() { hideMessage(matchStatusDisplay); }
-			function showMatchStatus(message, type = 'error') { showMessage(matchStatusDisplay, message, type); }
-
-
-
-			async function setOnlineStatus(username, oldUsername = null) {
-				if (!username) return;
-
-				// Remove old username's online status if it exists and is different
-				if (oldUsername && oldUsername !== username) {
-					const oldUserRef = ref(database, `online_users/${oldUsername.replace(/\s/g, '_')}`);
-					await set(oldUserRef, null).catch(error => console.error("Error removing old username's online status:", error));
-					console.log(`User ${oldUsername} is now offline.`);
-				}
-
-				const userRef = ref(database, `online_users/${username.replace(/\s/g, '_')}`);
-				try {
-					await set(userRef, true);
-					// Set up onDisconnect to remove this user from online_users
-					onDisconnect(userRef).remove();
-					console.log(`User ${username} is now online.`);
-				} catch (error) {
-					console.error("Error setting online status:", error);
-					showGeneralError(`Failed to set online status: ${error.message}`);
-				}
-			}
-
-
-			async function generateOrLoadUsername(forceNew = false) {
-				usernameDisplay.textContent = 'Loading username...';
-				usernameDisplay.classList.add('loading-text');
-				hideGeneralError();
-				hideInviteMessage();
-				hideSendInviteMessage();
-				hideMatchStatus(); // Clear match status on username change
-
-				let usernameFromLocalStorage = localStorage.getItem(localStorageKey);
-				let newUsername = null;
-
-				// Handle existing username cleanup for the *old* currentUsername, if any
-				if (currentUsername) {
-					// Cancel all onDisconnect operations for invites previously sent by this user
-					for (const inviteId in inviteOnDisconnectRefs) {
-						if (inviteOnDisconnectRefs.hasOwnProperty(inviteId)) {
-							await inviteOnDisconnectRefs[inviteId].cancel()
-								.catch(err => console.error(`Error canceling onDisconnect for invite ${inviteId}:`, err));
-						}
-					}
-					inviteOnDisconnectRefs = {}; // Clear the map
-
-					// Stop listening for all invites (the onValue listener)
-					// You'll need to store and manage the off() function if you want to stop listeners.
-					// For now, onValue listeners will be re-applied with the new username.
-					// You might need to add `off(ref(database, 'invites'))` here to be more explicit.
-					// off(invitesRef);
-					// Clear existing invites from UI for old user
-					sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
-					receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
-
-					// --- NEW: Handle cleanup for matchmaking if the user was in a room ---
-					if (currentRoomRef) {
-						console.log("Leaving previous room on username change.");
-						// We use remove() on the entire room to reset it completely if the user leaves
-						// If the other player is still in the room, this will trigger the room reset logic.
-						await remove(currentRoomRef).catch(err => console.error("Error leaving previous room:", err));
-						currentRoomRef = null;
-						playerNumber = null;
-					}
-				}
-
-
-				if (!forceNew && usernameFromLocalStorage) {
-					newUsername = usernameFromLocalStorage;
-					usernameDisplay.textContent = newUsername;
-					usernameDisplay.classList.remove('loading-text');
-					console.log("Loaded username from localStorage:", newUsername);
-				} else {
-					try {
-						const snapshot = await get(usernameComponentsRef);
-
-						if (snapshot.exists()) {
-							const components = snapshot.val();
-
-							const emotions = components.emotions ? Object.keys(components.emotions) : [];
-							const colors = components.colours ? Object.keys(components.colours) : [];
-							const animals = components.animal ? Object.keys(components.animal) : [];
-
-							if (emotions.length > 0 && colors.length > 0 && animals.length > 0) {
-								const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
-								const randomColor = colors[Math.floor(Math.random() * colors.length)];
-								const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-
-								newUsername = `${randomEmotion} ${randomColor} ${randomAnimal}`;
-								usernameDisplay.textContent = newUsername;
-								usernameDisplay.classList.remove('loading-text');
-								localStorage.setItem(localStorageKey, newUsername); // Save to localStorage
-								console.log("Generated and saved new username:", newUsername);
-
-							} else {
-								showGeneralError("Username components are incomplete or empty in Firebase. Please check your database structure.");
-								newUsername = "FallbackUser";
-								usernameDisplay.textContent = newUsername;
-								usernameDisplay.classList.remove('loading-text');
-								localStorage.setItem(localStorageKey, newUsername); // Save fallback
-							}
-						} else {
-							showGeneralError("No username components found in Firebase. Please ensure 'username_components' exists and contains data.");
-							newUsername = "NoDataUser";
-							usernameDisplay.textContent = newUsername;
-							usernameDisplay.classList.remove('loading-text');
-							localStorage.setItem(localStorageKey, newUsername); // Save fallback
-						}
-					} catch (error) {
-						console.error("Error fetching username components from Firebase:", error);
-						showGeneralError(`Failed to fetch username components: ${error.message}`);
-						newUsername = "ErrorUser";
-						usernameDisplay.textContent = newUsername;
-						usernameDisplay.classList.remove('loading-text');
-						localStorage.setItem(localStorageKey, newUsername); // Save error fallback
-					}
-				}
-
-				// Set online status and start listeners for the new or loaded username
-				if (newUsername) {
-					// Pass oldUsername to setOnlineStatus for explicit removal
-					setOnlineStatus(newUsername, currentUsername);
-					currentUsername = newUsername; // Update global currentUsername
-					listenForInvites(currentUsername);
-				}
-			}
-
-
-
-
-
-
-
-
-            async function findAndJoinRoom() {
-                if (!currentUsername) {
-                    showMatchStatus('Please generate a username first.', 'error');
-                    return;
+                // --- NEW: Handle cleanup for matchmaking if the user was in a room ---
+                if (currentRoomRef) {
+                    console.log("Leaving previous room on username change.");
+                    // We use remove() on the entire room to reset it completely if the user leaves
+                    // If the other player is still in the room, this will trigger the room reset logic.
+                    await remove(currentRoomRef).catch(err => console.error("Error leaving previous room:", err));
+                    currentRoomRef = null;
+                    playerNumber = null;
                 }
+            }
 
-                findRandomGameBtn.disabled = true;
-                showMatchStatus('Searching for a match...', 'loading');
 
-                if (!waitingRoomsRef) {
-                    console.error("Waiting rooms reference is not initialized.");
-                    showMatchStatus('Matchmaking service is not available. Please try again.', 'error');
-                    findRandomGameBtn.disabled = false;
-                    return;
+            if (!forceNew && usernameFromLocalStorage) {
+                newUsername = usernameFromLocalStorage;
+                usernameDisplay.textContent = newUsername;
+                usernameDisplay.classList.remove('loading-text');
+                console.log("Loaded username from localStorage:", newUsername);
+            } else {
+                try {
+                    const snapshot = await get(usernameComponentsRef);
+
+                    if (snapshot.exists()) {
+                        const components = snapshot.val();
+
+                        const emotions = components.emotions ? Object.keys(components.emotions) : [];
+                        const colors = components.colours ? Object.keys(components.colours) : [];
+                        const animals = components.animal ? Object.keys(components.animal) : [];
+
+                        if (emotions.length > 0 && colors.length > 0 && animals.length > 0) {
+                            const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+                            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                            const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
+
+                            newUsername = `${randomEmotion} ${randomColor} ${randomAnimal}`;
+                            usernameDisplay.textContent = newUsername;
+                            usernameDisplay.classList.remove('loading-text');
+                            localStorage.setItem(localStorageKey, newUsername); // Save to localStorage
+                            console.log("Generated and saved new username:", newUsername);
+
+                        } else {
+                            showGeneralError("Username components are incomplete or empty in Firebase. Please check your database structure.");
+                            newUsername = "FallbackUser";
+                            usernameDisplay.textContent = newUsername;
+                            usernameDisplay.classList.remove('loading-text');
+                            localStorage.setItem(localStorageKey, newUsername); // Save fallback
+                        }
+                    } else {
+                        showGeneralError("No username components found in Firebase. Please ensure 'username_components' exists and contains data.");
+                        newUsername = "NoDataUser";
+                        usernameDisplay.textContent = newUsername;
+                        usernameDisplay.classList.remove('loading-text');
+                        localStorage.setItem(localStorageKey, newUsername); // Save fallback
+                    }
+                } catch (error) {
+                    console.error("Error fetching username components from Firebase:", error);
+                    showGeneralError(`Failed to fetch username components: ${error.message}`);
+                    newUsername = "ErrorUser";
+                    usernameDisplay.textContent = newUsername;
+                    usernameDisplay.classList.remove('loading-text');
+                    localStorage.setItem(localStorageKey, newUsername); // Save error fallback
                 }
+            }
 
-                let roomFound = false;
+            // Set online status and start listeners for the new or loaded username
+            if (newUsername) {
+                // Pass oldUsername to setOnlineStatus for explicit removal
+                setOnlineStatus(newUsername, currentUsername);
+                currentUsername = newUsername; // Update global currentUsername
+                listenForInvites(currentUsername);
+            }
+        }
 
-                for (let i = 1; i <= 10; i++) {
-                    const roomRef = child(waitingRoomsRef, `room${i}`);
-                    try {
-                        const { committed, snapshot } = await runTransaction(roomRef, (currentData) => {
-                            if (currentData === null) {
-                                return { player1: currentUsername };
+
+
+
+
+
+
+
+        async function findAndJoinRoom() {
+            if (!currentUsername) {
+                showMatchStatus('Please generate a username first.', 'error');
+                return;
+            }
+
+            findRandomGameBtn.disabled = true;
+            showMatchStatus('Searching for a match...', 'loading');
+
+            if (!waitingRoomsRef) {
+                console.error("Waiting rooms reference is not initialized.");
+                showMatchStatus('Matchmaking service is not available. Please try again.', 'error');
+                findRandomGameBtn.disabled = false;
+                return;
+            }
+
+            let roomFound = false;
+
+            for (let i = 1; i <= 10; i++) {
+                const roomRef = child(waitingRoomsRef, `room${i}`);
+                try {
+                    const { committed, snapshot } = await runTransaction(roomRef, (currentData) => {
+                        if (currentData === null) {
+                            return { player1: currentUsername };
+                        }
+                        if (!currentData.player1) {
+                            currentData.player1 = currentUsername;
+                            return currentData;
+                        }
+                        if (!currentData.player2) {
+                            currentData.player2 = currentUsername;
+                            return currentData;
+                        }
+                        return undefined;
+                    });
+
+                    if (committed) {
+                        roomFound = true;
+                        const roomData = snapshot.val();
+                        currentRoomRef = roomRef;
+
+                        if (roomData.player1 === currentUsername) {
+                            playerNumber = 1;
+                        } else if (roomData.player2 === currentUsername) {
+                            playerNumber = 2;
+                        }
+
+                        onDisconnect(child(roomRef, `player${playerNumber}`)).remove();
+
+                        // Listen for changes in this specific room
+                        onValue(roomRef, (roomSnapshot) => {
+                            const roomState = roomSnapshot.val();
+
+                            if (!roomState) {
+                                showMatchStatus('Opponent disconnected. Room reset. Please find a new match.', 'error');
+                                findRandomGameBtn.disabled = false;
+                                currentRoomRef = null;
+                                playerNumber = null;
+                                return;
                             }
-                            if (!currentData.player1) {
-                                currentData.player1 = currentUsername;
-                                return currentData;
+
+                            // Check if both players are in the room
+                            if (roomState && roomState.player1 && roomState.player2) {
+                                showMatchStatus('Match was made! The game can now begin.', 'found');
+                                findRandomGameBtn.disabled = true;
+
+                                // Sort players to get a consistent game room name
+                                const playersSorted = [roomState.player1, roomState.player2].sort();
+                                const gameRoomName = `${playersSorted[0]}_vs_${playersSorted[1]}`;
+
+                                // Get the game room reference
+                                const gameRef = child(gameRoomsRef, gameRoomName);
+
+                                // This check ensures only one player creates the room, but both players get the game room name
+                                get(gameRef).then(async (gameSnapshot) => {
+                                    if (!gameSnapshot.exists()) {
+                                        const initialState = {
+                                            bigBoardState: Array(3).fill(0).map(() => Array(3).fill(0)),
+                                            subBoardStates: Array(3).fill(0).map(() => Array(3).fill(0).map(() => Array(3).fill(0).map(() => Array(3).fill(0)))),
+                                            currentPlayer: Math.floor(Math.random() * 2),
+                                            nextSubgrid: null
+                                        };
+                                        await createGameRoom(initialState, roomState.player1, roomState.player2);
+                                    }
+
+                                    // This is the crucial part: call the listener for BOTH players
+                                    // after the game room has been established.
+                                    onlineMenuDIV.classList.add("hidden");
+                                    gameDiv.classList.remove("hidden");
+                                    players = [roomState.player1, roomState.player2];
+                                    createBoard();
+                                    listenForGameUpdates(gameRoomName);
+                                });
+                            } else {
+                                showMatchStatus('Waiting for an opponent...', 'loading');
+                                findRandomGameBtn.disabled = true;
                             }
-                            if (!currentData.player2) {
-                                currentData.player2 = currentUsername;
-                                return currentData;
-                            }
-                            return undefined;
                         });
-
-                        if (committed) {
-                            roomFound = true;
-                            const roomData = snapshot.val();
-                            currentRoomRef = roomRef;
-
-                            if (roomData.player1 === currentUsername) {
-                                playerNumber = 1;
-                            } else if (roomData.player2 === currentUsername) {
-                                playerNumber = 2;
-                            }
-
-                            onDisconnect(child(roomRef, `player${playerNumber}`)).remove();
-
-                            // Listen for changes in this specific room
-                            onValue(roomRef, (roomSnapshot) => {
-                                const roomState = roomSnapshot.val();
-
-                                if (!roomState) {
-                                    showMatchStatus('Opponent disconnected. Room reset. Please find a new match.', 'error');
-                                    findRandomGameBtn.disabled = false;
-                                    currentRoomRef = null;
-                                    playerNumber = null;
-                                    return;
-                                }
-
-                                // Check if both players are in the room
-                                if (roomState && roomState.player1 && roomState.player2) {
-                                    showMatchStatus('Match was made! The game can now begin.', 'found');
-                                    findRandomGameBtn.disabled = true;
-
-                                    // Sort players to get a consistent game room name
-                                    const playersSorted = [roomState.player1, roomState.player2].sort();
-                                    const gameRoomName = `${playersSorted[0]}_vs_${playersSorted[1]}`;
-
-                                    // Get the game room reference
-                                    const gameRef = child(gameRoomsRef, gameRoomName);
-
-                                    // This check ensures only one player creates the room, but both players get the game room name
-                                    get(gameRef).then(async (gameSnapshot) => {
-                                        if (!gameSnapshot.exists()) {
-                                            const initialState = {
-                                                bigBoardState: Array(3).fill(0).map(() => Array(3).fill(0)),
-                                                subBoardStates: Array(3).fill(0).map(() => Array(3).fill(0).map(() => Array(3).fill(0).map(() => Array(3).fill(0)))),
-                                                currentPlayer: Math.floor(Math.random() * 2),
-                                                nextSubgrid: null
-                                            };
-                                            await createGameRoom(initialState, roomState.player1, roomState.player2);
-                                        }
-
-                                        // This is the crucial part: call the listener for BOTH players
-                                        // after the game room has been established.
-                                        onlineMenuDIV.classList.add("hidden");
-                                        gameDiv.classList.remove("hidden");
-                                        players = [roomState.player1, roomState.player2];
-                                        createBoard();
-                                        listenForGameUpdates(gameRoomName);
-                                    });
-                                } else {
-                                    showMatchStatus('Waiting for an opponent...', 'loading');
-                                    findRandomGameBtn.disabled = true;
-                                }
-                            });
-                            break;
-                        }
-                    } catch (error) {
-                        console.error(`Error joining room ${i}:`, error);
+                        break;
                     }
-                }
-                if (!roomFound) {
-                    showMatchStatus('All rooms are full. Please try again in a moment.', 'error');
-                    findRandomGameBtn.disabled = false;
+                } catch (error) {
+                    console.error(`Error joining room ${i}:`, error);
                 }
             }
-			
-
-
-			/**
-			 * Listens for changes in the online_users node and updates the UI to show the count.
-			 */
-			function listenForOnlineUsers() {
-				onValue(onlineUsersRef, (snapshot) => {
-					const users = snapshot.val();
-					let count = 0;
-					if (users) {
-						count = Object.keys(users).length;
-					}
-					onlineUsersCountDisplay.textContent = count;
-					onlineUsersCountDisplay.classList.remove('loading-text');
-				}, (error) => {
-					console.error("Error listening for online users:", error);
-					onlineUsersCountDisplay.textContent = 'Error';
-					onlineUsersCountDisplay.classList.remove('loading-text');
-					onlineUsersCountDisplay.classList.add('error-message');
-				});
-			}
-
-			async function isUserOnline(username) {
-				const userKey = username.replace(/\s/g, '_');
-				try {
-					const snapshot = await get(ref(database, `online_users/${userKey}`));
-					return snapshot.exists() && snapshot.val() === true;
-				} catch (error) {
-					console.error("Error checking online status:", error);
-					return false;
-				}
-			}
-
-
-
-			sendInviteBtn.addEventListener('click', async () => {
-				if (!currentUsername) {
-					showSendInviteMessage("Please generate your username first.", 'error');
-					return;
-				}
-
-				const recipientUsername = inviteInput.value.trim();
-				if (!recipientUsername) {
-					showSendInviteMessage("Please enter a username to invite.", 'error');
-					return;
-				}
-
-				if (recipientUsername === currentUsername) {
-					showSendInviteMessage("You cannot invite yourself.", 'error');
-					return;
-				}
-
-				// Prevent sending invite if user is in matchmaking
-				if (currentRoomRef) {
-					showSendInviteMessage("You are currently looking for a random game. Please cancel to send an invite.", 'error');
-					return;
-				}
-
-
-				hideSendInviteMessage();
-
-				const online = await isUserOnline(recipientUsername);
-				if (!online) {
-					showSendInviteMessage(`"${recipientUsername}" is not online or spelled incorrectly.`, 'error');
-					return;
-				}
-
-				const newInvite = {
-					sender: currentUsername,
-					recipient: recipientUsername,
-					status: 'pending',
-					timestamp: Date.now()
-				};
-
-				try {
-					const newInviteRef = push(invitesRef);
-					const inviteId = newInviteRef.key;
-
-					await set(newInviteRef, newInvite);
-					showSendInviteMessage(`Invite sent to ${recipientUsername}!`, 'success');
-					inviteInput.value = '';
-
-					const inviteStatusRef = ref(database, `invites/${inviteId}/status`);
-					inviteOnDisconnectRefs[inviteId] = onDisconnect(inviteStatusRef);
-					await inviteOnDisconnectRefs[inviteId].set('cancelled')
-						.catch(err => console.error(`Failed to set onDisconnect for invite ${inviteId}:`, err));
-					console.log(`onDisconnect set for invite ${inviteId}`);
-
-				} catch (error) {
-					console.error("Error sending invite:", error);
-					showSendInviteMessage(`Failed to send invite: ${error.message}`, 'error');
-				}
-			});
-
-			function renderInviteItem(inviteId, inviteData, listElement, isSenderView) {
-				let listItem = document.getElementById(`invite-${inviteId}`);
-				if (listItem) {
-					listItem.remove();
-				}
-
-				listItem = document.createElement('li');
-				listItem.id = `invite-${inviteId}`;
-				listItem.classList.add('invite-item');
-
-				let contentHTML = '';
-				let actionsHTML = '';
-
-				if (isSenderView) {
-					contentHTML = `<span>To: <strong>${inviteData.recipient}</strong> - Status: <span class="invite-status-pending">${inviteData.status.toUpperCase()}</span></span>`;
-					if (inviteData.status === 'pending') {
-						actionsHTML = `
-								<div class="invite-actions">
-									<button class="cancel-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">cancel</span></button>
-								</div>
-							`;
-					}
-				} else { // Recipient view
-					contentHTML = `<span>From: <strong>${inviteData.sender}</strong></span>`;
-					if (inviteData.status === 'pending') {
-						actionsHTML = `
-								<div class="invite-actions">
-									<button class="accept-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">check</span></button>
-									<button class="reject-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">close</span></button>
-								</div>
-							`;
-					} else {
-						contentHTML += ` - Status: ${inviteData.status.toUpperCase()}`;
-					}
-				}
-
-				listItem.innerHTML = contentHTML + actionsHTML;
-				listElement.appendChild(listItem);
-
-				// Add event listeners for buttons
-				if (isSenderView && inviteData.status === 'pending') {
-					const cancelBtn = listItem.querySelector('.cancel-btn');
-					if (cancelBtn) {
-						cancelBtn.onclick = () => handleInviteCancel(inviteId);
-					}
-				} else if (!isSenderView && inviteData.status === 'pending') {
-					const acceptBtn = listItem.querySelector('.accept-btn');
-					const rejectBtn = listItem.querySelector('.reject-btn');
-
-					if (acceptBtn) {
-						acceptBtn.onclick = () => handleInviteResponse(inviteId, 'accepted');
-					}
-					if (rejectBtn) {
-						rejectBtn.onclick = () => handleInviteResponse(inviteId, 'rejected');
-					}
-				}
-			}
-
-			async function handleInviteResponse(inviteId, status) {
-				try {
-					const inviteRef = ref(database, `invites/${inviteId}`);
-					await update(inviteRef, { status: status });
-					console.log(`Invite ${inviteId} ${status}.`);
-					// If accepted/rejected, cancel onDisconnect for this invite
-					if (inviteOnDisconnectRefs[inviteId]) {
-						await inviteOnDisconnectRefs[inviteId].cancel();
-						delete inviteOnDisconnectRefs[inviteId];
-					}
-				} catch (error) {
-					console.error(`Error ${status} invite ${inviteId}:`, error);
-					showInviteMessage(`Failed to ${status} invite: ${error.message}`, 'error');
-				}
-			}
-
-			async function handleInviteCancel(inviteId) {
-				try {
-					const inviteRef = ref(database, `invites/${inviteId}`);
-					await update(inviteRef, { status: 'cancelled' });
-					console.log(`Invite ${inviteId} cancelled by sender.`);
-					// If cancelled by sender, cancel onDisconnect for this invite
-					if (inviteOnDisconnectRefs[inviteId]) {
-						await inviteOnDisconnectRefs[inviteId].cancel();
-						delete inviteOnDisconnectRefs[inviteId];
-					}
-				} catch (error) {
-					console.error(`Error canceling invite ${inviteId}:`, error);
-					showSendInviteMessage(`Failed to cancel invite: ${error.message}`, 'error');
-				}
-			}
-
-			function listenForInvites(username) {
-				if (!username) return;
-
-				sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
-				receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
-
-				onValue(invitesRef, (snapshot) => {
-					const invites = snapshot.val();
-
-					const tempSentList = document.createElement('ul');
-					const tempReceivedList = document.createElement('ul');
-
-					if (invites) {
-						Object.entries(invites).forEach(([inviteId, inviteData]) => {
-							if (inviteData.sender === username) {
-								if (inviteData.status === 'pending' || inviteData.status === 'accepted') {
-									renderInviteItem(inviteId, inviteData, tempSentList, true);
-								}
-							} else if (inviteData.recipient === username) {
-								if (inviteData.status === 'pending') {
-									renderInviteItem(inviteId, inviteData, tempReceivedList, false);
-								}
-							}
-
-							// Clean up invites that are no longer relevant (e.g., cancelled, rejected)
-							if (inviteData.status === 'cancelled' || inviteData.status === 'rejected') {
-								const itemToRemove = document.getElementById(`invite-${inviteId}`);
-								if (itemToRemove) {
-									itemToRemove.remove();
-								}
-								// Also remove from database for cleanup
-								remove(ref(database, `invites/${inviteId}`))
-									.then(() => console.log(`Invite ${inviteId} (${inviteData.status}) removed from DB.`))
-									.catch(err => console.error(`Error removing ${inviteData.status} invite ${inviteId}:`, err));
-							}
-						});
-					}
-
-					sentInvitesList.innerHTML = '';
-					if (tempSentList.children.length > 0) {
-						Array.from(tempSentList.children).forEach(child => sentInvitesList.appendChild(child));
-					} else {
-						sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
-					}
-
-					receivedInvitesList.innerHTML = '';
-					if (tempReceivedList.children.length > 0) {
-						Array.from(tempReceivedList.children).forEach(child => receivedInvitesList.appendChild(child));
-					} else {
-						receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
-					}
-
-				}, (error) => {
-					console.error("Error listening for invites:", error);
-					showGeneralError(`Error loading invites: ${error.message}`);
-					sentInvitesList.innerHTML = `<li class="error-message">Error loading sent invites: ${error.message}</li>`;
-					receivedInvitesList.innerHTML = `<li class="error-message">Error loading pending challenges: ${error.message}</li>`;
-				});
-			}
-
-
-			// --- Event Listeners ---
-			document.addEventListener('DOMContentLoaded', () => {
-				generateOrLoadUsername();
-				listenForOnlineUsers();
-			});
-
-			// NEW: Event listener for the matchmaking button
-			if (findRandomGameBtn) {
-				findRandomGameBtn.addEventListener('click', findAndJoinRoom);
-			}
-
-			// Dark mode toggle event listener
-			if (darkModeToggle) {
-				darkModeToggle.addEventListener('change', () => {
-					if (darkModeToggle.checked) {
-						document.body.classList.add('dark-mode');
-					} else {
-						document.body.classList.remove('dark-mode');
-					}
-				});
-			}
-
-			// Copy username to clipboard
-			copyBtn.addEventListener('click', async () => {
-				const usernameToCopy = usernameDisplay.textContent;
-				if (usernameToCopy && usernameToCopy !== 'Loading username...' && usernameToCopy !== 'ErrorUser' && usernameToCopy !== 'NoDataUser') {
-					try {
-						await navigator.clipboard.writeText(usernameToCopy);
-						console.log('Username copied to clipboard:', usernameToCopy);
-						const originalText = copyBtn.innerHTML;
-						copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
-						setTimeout(() => {
-							copyBtn.innerHTML = originalText;
-						}, 2000);
-					} catch (err) {
-						console.error('Failed to copy username:', err);
-						showGeneralError('Failed to copy username. Please copy manually.');
-					}
-				} else {
-					showGeneralError('No username to copy.');
-				}
-			});
-
-
-
-
-			// game functions
-
-            function showWinAnimation(winner) {
-                const overlay = document.getElementById('winOverlay');
-                overlay.style.display = 'block';
-                overlay.innerHTML = ''; // clear previous
-
-                const columns = Math.floor(window.innerWidth / 20);
-
-                for (let i = 0; i < columns; i++) {
-                    const col = document.createElement('div');
-                    col.style.position = 'absolute';
-                    col.style.left = `${i * 20}px`;
-                    col.style.top = `-${Math.random() * 500}px`;
-                    col.style.fontFamily = 'monospace';
-                    col.style.color = 'black';
-                    col.style.fontSize = '2rem';
-                    col.textContent = Math.random() > 0.5 ? 'X' : 'O';
-                    overlay.appendChild(col);
-
-                    animateDrop(col);
-                }
-
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 5000); // hide after 5 seconds
+            if (!roomFound) {
+                showMatchStatus('All rooms are full. Please try again in a moment.', 'error');
+                findRandomGameBtn.disabled = false;
             }
+        }
 
-            function animateDrop(element) {
-                let top = parseFloat(element.style.top);
-                const interval = setInterval(() => {
-                    top += 5;
-                    if (top > window.innerHeight) {
-                        top = -50; // reset to top
-                        element.textContent = Math.random() > 0.5 ? 'X' : 'O';
-                    }
-                    element.style.top = `${top}px`;
-                }, 30);
-            }
 
-            function renderNames() {
-                name1Span.textContent = players[0];
-                name2Span.textContent = players[1];
-                if (currentPlayer === 0) {
-                    name1Span.classList.add('highlight');
-                    name2Span.classList.remove('highlight');
-                } else {
-                    name2Span.classList.add('highlight');
-                    name1Span.classList.remove('highlight');
+
+        /**
+         * Listens for changes in the online_users node and updates the UI to show the count.
+         */
+        function listenForOnlineUsers() {
+            onValue(onlineUsersRef, (snapshot) => {
+                const users = snapshot.val();
+                let count = 0;
+                if (users) {
+                    count = Object.keys(users).length;
                 }
-            }
+                onlineUsersCountDisplay.textContent = count;
+                onlineUsersCountDisplay.classList.remove('loading-text');
+            }, (error) => {
+                console.error("Error listening for online users:", error);
+                onlineUsersCountDisplay.textContent = 'Error';
+                onlineUsersCountDisplay.classList.remove('loading-text');
+                onlineUsersCountDisplay.classList.add('error-message');
+            });
+        }
 
-            function createBoard() {
-                bigBoardDiv.innerHTML = '';
-                for (let r = 0; r < 3; r++) {
-                    for (let c = 0; c < 3; c++) {
-                        const cell = document.createElement('div');
-                        cell.classList.add('cell');
-                        cell.dataset.row = r;
-                        cell.dataset.col = c;
-                        for (let sr = 0; sr < 3; sr++) {
-                            for (let sc = 0; sc < 3; sc++) {
-                                const subcell = document.createElement('div');
-                                subcell.classList.add('subcell');
-                                subcell.dataset.bigRow = r;
-                                subcell.dataset.bigCol = c;
-                                subcell.dataset.subRow = sr;
-                                subcell.dataset.subCol = sc;
-                                subcell.addEventListener('click', handleMove);
-                                cell.appendChild(subcell);
-                            }
-                        }
-                        bigBoardDiv.appendChild(cell);
-                    }
-                }
-            }
-
-
-
-            async function handleMove(e) {
-
-
-                if (currentUsername !== players[currentPlayer]) {
-                    console.log("It's not your turn!");
-                    return; // Exit the function, preventing the move
-                }
-
-                
-
-
-                const el = e.currentTarget;
-                const br = +el.dataset.bigRow, bc = +el.dataset.bigCol;
-                const sr = +el.dataset.subRow, sc = +el.dataset.subCol;
-
-                if (bigBoardState[br][bc] !== EMPTY) return; // already won/drawn
-                if (subBoardStates[br][bc][sr][sc] !== EMPTY) return; // already filled
-                if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) return; // wrong grid
-
-                const mark = currentPlayer === 0 ? X : O;
-                subBoardStates[br][bc][sr][sc] = mark;
-                el.textContent = mark === X ? 'X' : 'O';
-
-                // Check if subgrid is won
-                if (checkWin(subBoardStates[br][bc], mark)) {
-                    bigBoardState[br][bc] = mark;
-                    const cell = findCell(br, bc);
-                    cell.classList.add('won');
-                    const overlay = document.createElement('div');
-                    overlay.classList.add('winner-mark');
-                    overlay.textContent = mark === X ? 'X' : 'O';
-                    cell.appendChild(overlay);
-
-                } else if (isFullSubgrid(subBoardStates[br][bc])) {
-                    bigBoardState[br][bc] = DRAW;
-                    const cell = findCell(br, bc);
-                    cell.classList.add('won');
-                    const overlay = document.createElement('div');
-                    overlay.classList.add('winner-mark');
-                    overlay.textContent = '—';
-                    cell.appendChild(overlay);
-                }
-
-                // Check if big grid is won
-                if (checkWin(bigBoardState, mark)) {
-                    winmessageDIV.style.display = 'block';
-                    showWinAnimation(players[currentPlayer]);
-                    winmessage.innerHTML = `${players[currentPlayer]} won!`;
-
-                    gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
-                    return;
-                }
-
-                // Determine next subgrid
-                if (bigBoardState[sr][sc] === EMPTY) {
-                    nextSubgrid = [sr, sc];
-                } else {
-                    nextSubgrid = null;
-                }
-
-                currentPlayer = 1 - currentPlayer;
-                renderNames();
-                highlightNextSubgrid();
-
-               
-
-                updateFirebaseState();
-
-                // Update the Firebase Realtime Database
-                //await update(ref( database, 'game_rooms/' + gameRoomName + '/state'), updatedState);
-
-            }
-
-
-            function findCell(r, c) {
-                return [...bigBoardDiv.children].find(el => +el.dataset.row === r && +el.dataset.col === c);
-            }
-
-            function highlightNextSubgrid() {
-                [...bigBoardDiv.children].forEach(cell => {
-                    const r = +cell.dataset.row, c = +cell.dataset.col;
-                    cell.classList.remove('active-subgrid');
-                    if (bigBoardState[r][c] === EMPTY &&
-                        (!nextSubgrid || (nextSubgrid[0] === r && nextSubgrid[1] === c))) {
-                        cell.classList.add('active-subgrid');
-                    }
-
-                });
-            }
-
-            function checkWin(board, mark) {
-                for (let i = 0; i < 3; i++) {
-                    if (board[i][0] === mark && board[i][1] === mark && board[i][2] === mark) return true;
-                    if (board[0][i] === mark && board[1][i] === mark && board[2][i] === mark) return true;
-                }
-                if (board[0][0] === mark && board[1][1] === mark && board[2][2] === mark) return true;
-                if (board[0][2] === mark && board[1][1] === mark && board[2][0] === mark) return true;
+        async function isUserOnline(username) {
+            const userKey = username.replace(/\s/g, '_');
+            try {
+                const snapshot = await get(ref(database, `online_users/${userKey}`));
+                return snapshot.exists() && snapshot.val() === true;
+            } catch (error) {
+                console.error("Error checking online status:", error);
                 return false;
             }
+        }
 
 
-            function isFullSubgrid(subgrid) {
-                return subgrid.every(row => row.every(cell => cell !== EMPTY));
+
+        sendInviteBtn.addEventListener('click', async () => {
+            if (!currentUsername) {
+                showSendInviteMessage("Please generate your username first.", 'error');
+                return;
+            }
+
+            const recipientUsername = inviteInput.value.trim();
+            if (!recipientUsername) {
+                showSendInviteMessage("Please enter a username to invite.", 'error');
+                return;
+            }
+
+            if (recipientUsername === currentUsername) {
+                showSendInviteMessage("You cannot invite yourself.", 'error');
+                return;
+            }
+
+            // Prevent sending invite if user is in matchmaking
+            if (currentRoomRef) {
+                showSendInviteMessage("You are currently looking for a random game. Please cancel to send an invite.", 'error');
+                return;
             }
 
 
-   
-         
-            async function createGameRoom(initialState, player1Username, player2Username) {
+            hideSendInviteMessage();
 
+            const online = await isUserOnline(recipientUsername);
+            if (!online) {
+                showSendInviteMessage(`"${recipientUsername}" is not online or spelled incorrectly.`, 'error');
+                return;
+            }
 
-                if (!player1Username || !player2Username) {
-                    throw new Error("Both player usernames must be defined");
+            const newInvite = {
+                sender: currentUsername,
+                recipient: recipientUsername,
+                status: 'pending',
+                timestamp: Date.now()
+            };
+
+            try {
+                const newInviteRef = push(invitesRef);
+                const inviteId = newInviteRef.key;
+
+                await set(newInviteRef, newInvite);
+                showSendInviteMessage(`Invite sent to ${recipientUsername}!`, 'success');
+                inviteInput.value = '';
+
+                const inviteStatusRef = ref(database, `invites/${inviteId}/status`);
+                inviteOnDisconnectRefs[inviteId] = onDisconnect(inviteStatusRef);
+                await inviteOnDisconnectRefs[inviteId].set('cancelled')
+                    .catch(err => console.error(`Failed to set onDisconnect for invite ${inviteId}:`, err));
+                console.log(`onDisconnect set for invite ${inviteId}`);
+
+            } catch (error) {
+                console.error("Error sending invite:", error);
+                showSendInviteMessage(`Failed to send invite: ${error.message}`, 'error');
+            }
+        });
+
+        function renderInviteItem(inviteId, inviteData, listElement, isSenderView) {
+            let listItem = document.getElementById(`invite-${inviteId}`);
+            if (listItem) {
+                listItem.remove();
+            }
+
+            listItem = document.createElement('li');
+            listItem.id = `invite-${inviteId}`;
+            listItem.classList.add('invite-item');
+
+            let contentHTML = '';
+            let actionsHTML = '';
+
+            if (isSenderView) {
+                contentHTML = `<span>To: <strong>${inviteData.recipient}</strong> - Status: <span class="invite-status-pending">${inviteData.status.toUpperCase()}</span></span>`;
+                if (inviteData.status === 'pending') {
+                    actionsHTML = `
+                                    <div class="invite-actions">
+                                        <button class="cancel-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">cancel</span></button>
+                                    </div>
+                                `;
+                }
+            } else { // Recipient view
+                contentHTML = `<span>From: <strong>${inviteData.sender}</strong></span>`;
+                if (inviteData.status === 'pending') {
+                    actionsHTML = `
+                                    <div class="invite-actions">
+                                        <button class="accept-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">check</span></button>
+                                        <button class="reject-btn" data-invite-id="${inviteId}"><span class="material-symbols-outlined">close</span></button>
+                                    </div>
+                                `;
+                } else {
+                    contentHTML += ` - Status: ${inviteData.status.toUpperCase()}`;
+                }
+            }
+
+            listItem.innerHTML = contentHTML + actionsHTML;
+            listElement.appendChild(listItem);
+
+            // Add event listeners for buttons
+            if (isSenderView && inviteData.status === 'pending') {
+                const cancelBtn = listItem.querySelector('.cancel-btn');
+                if (cancelBtn) {
+                    cancelBtn.onclick = () => handleInviteCancel(inviteId);
+                }
+            } else if (!isSenderView && inviteData.status === 'pending') {
+                const acceptBtn = listItem.querySelector('.accept-btn');
+                const rejectBtn = listItem.querySelector('.reject-btn');
+
+                if (acceptBtn) {
+                    acceptBtn.onclick = () => handleInviteResponse(inviteId, 'accepted');
+                }
+                if (rejectBtn) {
+                    rejectBtn.onclick = () => handleInviteResponse(inviteId, 'rejected');
+                }
+            }
+        }
+
+        async function handleInviteResponse(inviteId, status) {
+            try {
+                const inviteRef = ref(database, `invites/${inviteId}`);
+                await update(inviteRef, { status: status });
+                console.log(`Invite ${inviteId} ${status}.`);
+                // If accepted/rejected, cancel onDisconnect for this invite
+                if (inviteOnDisconnectRefs[inviteId]) {
+                    await inviteOnDisconnectRefs[inviteId].cancel();
+                    delete inviteOnDisconnectRefs[inviteId];
+                }
+            } catch (error) {
+                console.error(`Error ${status} invite ${inviteId}:`, error);
+                showInviteMessage(`Failed to ${status} invite: ${error.message}`, 'error');
+            }
+        }
+
+        async function handleInviteCancel(inviteId) {
+            try {
+                const inviteRef = ref(database, `invites/${inviteId}`);
+                await update(inviteRef, { status: 'cancelled' });
+                console.log(`Invite ${inviteId} cancelled by sender.`);
+                // If cancelled by sender, cancel onDisconnect for this invite
+                if (inviteOnDisconnectRefs[inviteId]) {
+                    await inviteOnDisconnectRefs[inviteId].cancel();
+                    delete inviteOnDisconnectRefs[inviteId];
+                }
+            } catch (error) {
+                console.error(`Error canceling invite ${inviteId}:`, error);
+                showSendInviteMessage(`Failed to cancel invite: ${error.message}`, 'error');
+            }
+        }
+
+        function listenForInvites(username) {
+            if (!username) return;
+
+            sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
+            receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
+
+            onValue(invitesRef, (snapshot) => {
+                const invites = snapshot.val();
+
+                const tempSentList = document.createElement('ul');
+                const tempReceivedList = document.createElement('ul');
+
+                if (invites) {
+                    Object.entries(invites).forEach(([inviteId, inviteData]) => {
+                        if (inviteData.sender === username) {
+                            if (inviteData.status === 'pending' || inviteData.status === 'accepted') {
+                                renderInviteItem(inviteId, inviteData, tempSentList, true);
+                            }
+                        } else if (inviteData.recipient === username) {
+                            if (inviteData.status === 'pending') {
+                                renderInviteItem(inviteId, inviteData, tempReceivedList, false);
+                            }
+                        }
+
+                        // Clean up invites that are no longer relevant (e.g., cancelled, rejected)
+                        if (inviteData.status === 'cancelled' || inviteData.status === 'rejected') {
+                            const itemToRemove = document.getElementById(`invite-${inviteId}`);
+                            if (itemToRemove) {
+                                itemToRemove.remove();
+                            }
+                            // Also remove from database for cleanup
+                            remove(ref(database, `invites/${inviteId}`))
+                                .then(() => console.log(`Invite ${inviteId} (${inviteData.status}) removed from DB.`))
+                                .catch(err => console.error(`Error removing ${inviteData.status} invite ${inviteId}:`, err));
+                        }
+                    });
                 }
 
-                // Sort usernames alphabetically for consistent room names
-                const playersSorted = [player1Username, player2Username].sort();
-                const gameRoomName = `${playersSorted[0]}_vs_${playersSorted[1]}`;
-
-                currentRoomName = gameRoomName;
-
-                // Make sure gameRoomsRef is a proper Firebase reference
-                const gameRef = child(gameRoomsRef, gameRoomName);
-
-                // Check if the game room already exists
-                const snapshot = await get(gameRef);
-
-                if (snapshot.exists()) {
-                    console.log(`Game room already exists: ${gameRoomName}`);
-                    return gameRoomName;
+                sentInvitesList.innerHTML = '';
+                if (tempSentList.children.length > 0) {
+                    Array.from(tempSentList.children).forEach(child => sentInvitesList.appendChild(child));
+                } else {
+                    sentInvitesList.innerHTML = '<li class="loading-text">No sent invites.</li>';
                 }
 
-                // Save the initial game state
-                await set(gameRef, {
-                    createdAt: Date.now(),
-                    state: JSON.parse(JSON.stringify(initialState)),
-                    players: {
-                        player1: player1Username,
-                        player2: player2Username
+                receivedInvitesList.innerHTML = '';
+                if (tempReceivedList.children.length > 0) {
+                    Array.from(tempReceivedList.children).forEach(child => receivedInvitesList.appendChild(child));
+                } else {
+                    receivedInvitesList.innerHTML = '<li class="loading-text">No pending challenges.</li>';
+                }
+
+            }, (error) => {
+                console.error("Error listening for invites:", error);
+                showGeneralError(`Error loading invites: ${error.message}`);
+                sentInvitesList.innerHTML = `<li class="error-message">Error loading sent invites: ${error.message}</li>`;
+                receivedInvitesList.innerHTML = `<li class="error-message">Error loading pending challenges: ${error.message}</li>`;
+            });
+        }
+
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            generateOrLoadUsername();
+            listenForOnlineUsers();
+        });
+
+        // NEW: Event listener for the matchmaking button
+        if (findRandomGameBtn) {
+            findRandomGameBtn.addEventListener('click', findAndJoinRoom);
+        }
+
+        // Dark mode toggle event listener
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            });
+        }
+
+        // Copy username to clipboard
+        copyBtn.addEventListener('click', async () => {
+            const usernameToCopy = usernameDisplay.textContent;
+            if (usernameToCopy && usernameToCopy !== 'Loading username...' && usernameToCopy !== 'ErrorUser' && usernameToCopy !== 'NoDataUser') {
+                try {
+                    await navigator.clipboard.writeText(usernameToCopy);
+                    console.log('Username copied to clipboard:', usernameToCopy);
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy username:', err);
+                    showGeneralError('Failed to copy username. Please copy manually.');
+                }
+            } else {
+                showGeneralError('No username to copy.');
+            }
+        });
+
+
+
+
+        // game functions
+
+        function showWinAnimation(winner) {
+            const overlay = document.getElementById('winOverlay');
+            overlay.style.display = 'block';
+            overlay.innerHTML = ''; // clear previous
+
+            const columns = Math.floor(window.innerWidth / 20);
+
+            for (let i = 0; i < columns; i++) {
+                const col = document.createElement('div');
+                col.style.position = 'absolute';
+                col.style.left = `${i * 20}px`;
+                col.style.top = `-${Math.random() * 500}px`;
+                col.style.fontFamily = 'monospace';
+                col.style.color = 'black';
+                col.style.fontSize = '2rem';
+                col.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                overlay.appendChild(col);
+
+                animateDrop(col);
+            }
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 5000); // hide after 5 seconds
+        }
+
+        function animateDrop(element) {
+            let top = parseFloat(element.style.top);
+            const interval = setInterval(() => {
+                top += 5;
+                if (top > window.innerHeight) {
+                    top = -50; // reset to top
+                    element.textContent = Math.random() > 0.5 ? 'X' : 'O';
+                }
+                element.style.top = `${top}px`;
+            }, 30);
+        }
+
+        function renderNames() {
+            name1Span.textContent = players[0];
+            name2Span.textContent = players[1];
+            if (currentPlayer === 0) {
+                name1Span.classList.add('highlight');
+                name2Span.classList.remove('highlight');
+            } else {
+                name2Span.classList.add('highlight');
+                name1Span.classList.remove('highlight');
+            }
+        }
+
+        function createBoard() {
+            bigBoardDiv.innerHTML = '';
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    for (let sr = 0; sr < 3; sr++) {
+                        for (let sc = 0; sc < 3; sc++) {
+                            const subcell = document.createElement('div');
+                            subcell.classList.add('subcell');
+                            subcell.dataset.bigRow = r;
+                            subcell.dataset.bigCol = c;
+                            subcell.dataset.subRow = sr;
+                            subcell.dataset.subCol = sc;
+                            subcell.addEventListener('click', handleMove);
+                            cell.appendChild(subcell);
+                        }
                     }
-                });
+                    bigBoardDiv.appendChild(cell);
+                }
+            }
+        }
 
-                console.log(`Created new game room: ${gameRoomName}`);
+
+
+        async function handleMove(e) {
+
+
+            if (currentUsername !== players[currentPlayer]) {
+                console.log("It's not your turn!");
+                return; // Exit the function, preventing the move
+            }
+
+
+
+
+            const el = e.currentTarget;
+            const br = +el.dataset.bigRow, bc = +el.dataset.bigCol;
+            const sr = +el.dataset.subRow, sc = +el.dataset.subCol;
+
+            if (bigBoardState[br][bc] !== EMPTY) return; // already won/drawn
+            if (subBoardStates[br][bc][sr][sc] !== EMPTY) return; // already filled
+            if (nextSubgrid && (nextSubgrid[0] !== br || nextSubgrid[1] !== bc)) return; // wrong grid
+
+            const mark = currentPlayer === 0 ? X : O;
+            subBoardStates[br][bc][sr][sc] = mark;
+            el.textContent = mark === X ? 'X' : 'O';
+
+            // Check if subgrid is won
+            if (checkWin(subBoardStates[br][bc], mark)) {
+                bigBoardState[br][bc] = mark;
+                const cell = findCell(br, bc);
+                cell.classList.add('won');
+                const overlay = document.createElement('div');
+                overlay.classList.add('winner-mark');
+                overlay.textContent = mark === X ? 'X' : 'O';
+                cell.appendChild(overlay);
+
+            } else if (isFullSubgrid(subBoardStates[br][bc])) {
+                bigBoardState[br][bc] = DRAW;
+                const cell = findCell(br, bc);
+                cell.classList.add('won');
+                const overlay = document.createElement('div');
+                overlay.classList.add('winner-mark');
+                overlay.textContent = '—';
+                cell.appendChild(overlay);
+            }
+
+            // Check if big grid is won
+            if (checkWin(bigBoardState, mark)) {
+                winmessageDIV.style.display = 'block';
+                showWinAnimation(players[currentPlayer]);
+                winmessage.innerHTML = `${players[currentPlayer]} won!`;
+
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+                return;
+            }
+
+            // Determine next subgrid
+            if (bigBoardState[sr][sc] === EMPTY) {
+                nextSubgrid = [sr, sc];
+            } else {
+                nextSubgrid = null;
+            }
+
+            currentPlayer = 1 - currentPlayer;
+            renderNames();
+            highlightNextSubgrid();
+
+
+
+            updateFirebaseState();
+
+            // Update the Firebase Realtime Database
+            //await update(ref( database, 'game_rooms/' + gameRoomName + '/state'), updatedState);
+
+        }
+
+
+        function findCell(r, c) {
+            return [...bigBoardDiv.children].find(el => +el.dataset.row === r && +el.dataset.col === c);
+        }
+
+        function highlightNextSubgrid() {
+            [...bigBoardDiv.children].forEach(cell => {
+                const r = +cell.dataset.row, c = +cell.dataset.col;
+                cell.classList.remove('active-subgrid');
+                if (bigBoardState[r][c] === EMPTY &&
+                    (!nextSubgrid || (nextSubgrid[0] === r && nextSubgrid[1] === c))) {
+                    cell.classList.add('active-subgrid');
+                }
+
+            });
+        }
+
+        function checkWin(board, mark) {
+            for (let i = 0; i < 3; i++) {
+                if (board[i][0] === mark && board[i][1] === mark && board[i][2] === mark) return true;
+                if (board[0][i] === mark && board[1][i] === mark && board[2][i] === mark) return true;
+            }
+            if (board[0][0] === mark && board[1][1] === mark && board[2][2] === mark) return true;
+            if (board[0][2] === mark && board[1][1] === mark && board[2][0] === mark) return true;
+            return false;
+        }
+
+
+        function isFullSubgrid(subgrid) {
+            return subgrid.every(row => row.every(cell => cell !== EMPTY));
+        }
+
+
+
+
+        async function createGameRoom(initialState, player1Username, player2Username) {
+
+
+            if (!player1Username || !player2Username) {
+                throw new Error("Both player usernames must be defined");
+            }
+
+            // Sort usernames alphabetically for consistent room names
+            const playersSorted = [player1Username, player2Username].sort();
+            const gameRoomName = `${playersSorted[0]}_vs_${playersSorted[1]}`;
+
+            currentRoomName = gameRoomName;
+
+            // Make sure gameRoomsRef is a proper Firebase reference
+            const gameRef = child(gameRoomsRef, gameRoomName);
+
+            // Check if the game room already exists
+            const snapshot = await get(gameRef);
+
+            if (snapshot.exists()) {
+                console.log(`Game room already exists: ${gameRoomName}`);
                 return gameRoomName;
             }
 
+            // Save the initial game state
+            await set(gameRef, {
+                createdAt: Date.now(),
+                state: JSON.parse(JSON.stringify(initialState)),
+                players: {
+                    player1: player1Username,
+                    player2: player2Username
+                }
+            });
 
-            // Add a new function to listen for game state changes
-            function listenForGameUpdates(gameRoomName) {
-                // Get a reference to the specific game room's state
-                const gameStateRef = ref(database, 'game_rooms/' + gameRoomName + '/state');
+            console.log(`Created new game room: ${gameRoomName}`);
+            return gameRoomName;
+        }
 
-                // Attach a real-time listener to the game state
-                onValue(gameStateRef, (snapshot) => {
-                    const gameState = snapshot.val();
 
-                    if (gameState) {
-                        // Update local game state variables
-                        bigBoardState = gameState.bigBoardState;
-                        subBoardStates = gameState.subBoardStates;
-                        currentPlayer = gameState.currentPlayer;
-                        nextSubgrid = gameState.nextSubgrid;
+        // Add a new function to listen for game state changes
+        function listenForGameUpdates(gameRoomName) {
+            // Get a reference to the specific game room's state
+            const gameStateRef = ref(database, 'game_rooms/' + gameRoomName + '/state');
 
-                        // Call a function to update the HTML display based on the new state
-                        updateGameUI(gameState);
-                    }
-                });
+            // Attach a real-time listener to the game state
+            onValue(gameStateRef, (snapshot) => {
+                const gameState = snapshot.val();
+
+                if (gameState) {
+                    // Update local game state variables
+                    bigBoardState = gameState.bigBoardState;
+                    subBoardStates = gameState.subBoardStates;
+                    currentPlayer = gameState.currentPlayer;
+                    nextSubgrid = gameState.nextSubgrid;
+
+                    // Call a function to update the HTML display based on the new state
+                    updateGameUI(gameState);
+                }
+            });
+        }
+
+
+        // Add a new function to update the UI based on the game state
+        function updateGameUI(gameState) {
+            // Update player names and highlights
+            name1Span.textContent = players[0];
+            name2Span.textContent = players[1];
+            if (gameState.currentPlayer === 0) {
+                name1Span.classList.add('highlight');
+                name2Span.classList.remove('highlight');
+            } else {
+                name2Span.classList.add('highlight');
+                name1Span.classList.remove('highlight');
             }
 
+            // Loop through all subcells and update their content and classes
+            const allSubcells = document.querySelectorAll('.subcell');
+            allSubcells.forEach(el => {
+                const br = +el.dataset.bigRow;
+                const bc = +el.dataset.bigCol;
+                const sr = +el.dataset.subRow;
+                const sc = +el.dataset.subCol;
 
-            // Add a new function to update the UI based on the game state
-            function updateGameUI(gameState) {
-                // Update player names and highlights
-                name1Span.textContent = players[0];
-                name2Span.textContent = players[1];
-                if (gameState.currentPlayer === 0) {
-                    name1Span.classList.add('highlight');
-                    name2Span.classList.remove('highlight');
+                const mark = gameState.subBoardStates[br][bc][sr][sc];
+                el.textContent = mark === X ? 'X' : (mark === O ? 'O' : '');
+
+                // Disable subcells that have been played
+                if (mark !== EMPTY) {
+                    el.style.pointerEvents = 'none';
                 } else {
-                    name2Span.classList.add('highlight');
-                    name1Span.classList.remove('highlight');
+                    el.style.pointerEvents = 'auto';
                 }
+            });
 
-                // Loop through all subcells and update their content and classes
-                const allSubcells = document.querySelectorAll('.subcell');
-                allSubcells.forEach(el => {
-                    const br = +el.dataset.bigRow;
-                    const bc = +el.dataset.bigCol;
-                    const sr = +el.dataset.subRow;
-                    const sc = +el.dataset.subCol;
+            // Update big board highlights and winner marks
+            const allCells = document.querySelectorAll('.cell');
+            allCells.forEach(cell => {
+                const r = +cell.dataset.row;
+                const c = +cell.dataset.col;
 
-                    const mark = gameState.subBoardStates[br][bc][sr][sc];
-                    el.textContent = mark === X ? 'X' : (mark === O ? 'O' : '');
-
-                    // Disable subcells that have been played
-                    if (mark !== EMPTY) {
-                        el.style.pointerEvents = 'none';
-                    } else {
-                        el.style.pointerEvents = 'auto';
+                // Update winner marks
+                const winnerMark = cell.querySelector('.winner-mark');
+                if (gameState.bigBoardState[r][c] !== EMPTY) {
+                    cell.classList.add('won');
+                    if (!winnerMark) {
+                        const overlay = document.createElement('div');
+                        overlay.classList.add('winner-mark');
+                        overlay.textContent = gameState.bigBoardState[r][c] === X ? 'X' : (gameState.bigBoardState[r][c] === O ? 'O' : '—');
+                        cell.appendChild(overlay);
                     }
-                });
-
-                // Update big board highlights and winner marks
-                const allCells = document.querySelectorAll('.cell');
-                allCells.forEach(cell => {
-                    const r = +cell.dataset.row;
-                    const c = +cell.dataset.col;
-
-                    // Update winner marks
-                    const winnerMark = cell.querySelector('.winner-mark');
-                    if (gameState.bigBoardState[r][c] !== EMPTY) {
-                        cell.classList.add('won');
-                        if (!winnerMark) {
-                            const overlay = document.createElement('div');
-                            overlay.classList.add('winner-mark');
-                            overlay.textContent = gameState.bigBoardState[r][c] === X ? 'X' : (gameState.bigBoardState[r][c] === O ? 'O' : '—');
-                            cell.appendChild(overlay);
-                        }
-                    } else {
-                        cell.classList.remove('won');
-                        if (winnerMark) {
-                            winnerMark.remove();
-                        }
-                    }
-
-                    // Update active subgrid highlights
-                    cell.classList.remove('active-subgrid');
-                    if (gameState.bigBoardState[r][c] === EMPTY && (!gameState.nextSubgrid || (gameState.nextSubgrid[0] === r && gameState.nextSubgrid[1] === c))) {
-                        cell.classList.add('active-subgrid');
-                    }
-                });
-
-                // Check for a win and display the win message
-                if (checkWin(gameState.bigBoardState, X) || checkWin(gameState.bigBoardState, O)) {
-                    winmessageDIV.style.display = 'block';
-                    const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
-                    winmessage.innerHTML = `${winner} won!`;
-                    showWinAnimation(winner);
-                    gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
                 } else {
-                    winmessageDIV.style.display = 'none';
+                    cell.classList.remove('won');
+                    if (winnerMark) {
+                        winnerMark.remove();
+                    }
                 }
+
+                // Update active subgrid highlights
+                cell.classList.remove('active-subgrid');
+                if (gameState.bigBoardState[r][c] === EMPTY && (!gameState.nextSubgrid || (gameState.nextSubgrid[0] === r && gameState.nextSubgrid[1] === c))) {
+                    cell.classList.add('active-subgrid');
+                }
+            });
+
+            // Check for a win and display the win message
+            if (checkWin(gameState.bigBoardState, X) || checkWin(gameState.bigBoardState, O)) {
+                winmessageDIV.style.display = 'block';
+                const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
+                winmessage.innerHTML = `${winner} won!`;
+                showWinAnimation(winner);
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+            } else {
+                winmessageDIV.style.display = 'none';
+            }
+        }
+
+
+        // Add this new function to handle updating the database
+        async function updateFirebaseState() {
+
+            if (!currentRoomName) {
+                console.error("No active game room to update.");
+                return;
             }
 
+            const gameStateRef = ref(database, 'game_rooms/' + currentRoomName + '/state');
+            const newState = {
+                bigBoardState: bigBoardState,
+                subBoardStates: subBoardStates,
+                currentPlayer: currentPlayer,
+                nextSubgrid: nextSubgrid
+            };
 
-            // Add this new function to handle updating the database
-            async function updateFirebaseState() {
-
-                if (!currentRoomName) {
-                    console.error("No active game room to update.");
-                    return;
-                }
-
-                const gameStateRef = ref(database, 'game_rooms/' + currentRoomName + '/state');
-                const newState = {
-                    bigBoardState: bigBoardState,
-                    subBoardStates: subBoardStates,
-                    currentPlayer: currentPlayer,
-                    nextSubgrid: nextSubgrid
-                };
-
-                try {
-                    await set(gameStateRef, newState);
-                    console.log("Game state updated in Firebase.");
-                } catch (error) {
-                    console.error("Error updating game state:", error);
-                }
+            try {
+                await set(gameStateRef, newState);
+                console.log("Game state updated in Firebase.");
+            } catch (error) {
+                console.error("Error updating game state:", error);
             }
-            
+        }
 
 
 
 
 
 
-		</script>
+
+    </script>
 </body>
 </html>
