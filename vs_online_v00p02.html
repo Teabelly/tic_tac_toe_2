@@ -37,7 +37,7 @@
             align-items: center;
             background-color: #f7f3f2ff; /* Light background */
             color: #333;
-            padding: 1rem;
+            padding: 0.1rem;
             box-sizing: border-box;
         }
 
@@ -590,7 +590,16 @@
         .header-image {
             /* This is the class for your image */
             width: 75%; /* The image will take up 100% of its parent's width */
-            margin-top: 11%;
+            margin-top: 1%;
+        }
+
+        .body-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* This will push content to the top */
+            width: 100vw;
+            height: 100vh;
         }
 
     </style>
@@ -601,7 +610,7 @@
 
     
 
-    <div id="onlineMenu">
+    <div id="onlineMenu" class="body-wrapper">
 
 
 
@@ -614,7 +623,7 @@
 
         <div class="main-title">
             <img id="logoImage" class="header-image" src="images/logo_online.png" alt="wombatLogoOnline">
-            <h1> Play online v0.02 </h1>
+            <h1> Play online v0.03 </h1>
         </div>
 
 
@@ -645,7 +654,7 @@
             <p id="inviteMessage" class="hidden"></p>
         </div>
 
-        <div class="container">
+        <div class="container" style="display:none;">
             <h1>Send Invite: </h1>
             <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                 <input type="text" id="inviteInput" placeholder="username..."></input>
@@ -656,7 +665,7 @@
             </ul>
         </div>
 
-        <div class="container">
+        <div class="container" style="display:none;">
             <h1>Challenge(s): </h1>
             <ul id="receivedInvitesList" class="invite-list">
                 <li class="loading-text">No pending challenges.</li>
@@ -860,7 +869,7 @@
             if (oldUsername && oldUsername !== username) {
                 const oldUserRef = ref(database, `online_users/${oldUsername.replace(/\s/g, '_')}`);
                 await set(oldUserRef, null).catch(error => console.error("Error removing old username's online status:", error));
-                console.log(`User ${oldUsername} is now offline.`);
+                //console.log(`User ${oldUsername} is now offline.`);
             }
 
             const userRef = ref(database, `online_users/${username.replace(/\s/g, '_')}`);
@@ -868,7 +877,7 @@
                 await set(userRef, true);
                 // Set up onDisconnect to remove this user from online_users
                 onDisconnect(userRef).remove();
-                console.log(`User ${username} is now online.`);
+                //console.log(`User ${username} is now online.`);
             } catch (error) {
                 console.error("Error setting online status:", error);
                 showGeneralError(`Failed to set online status: ${error.message}`);
@@ -909,7 +918,7 @@
 
                 // --- NEW: Handle cleanup for matchmaking if the user was in a room ---
                 if (currentRoomRef) {
-                    console.log("Leaving previous room on username change.");
+                    //console.log("Leaving previous room on username change.");
                     // We use remove() on the entire room to reset it completely if the user leaves
                     // If the other player is still in the room, this will trigger the room reset logic.
                     await remove(currentRoomRef).catch(err => console.error("Error leaving previous room:", err));
@@ -1049,7 +1058,11 @@
 
                             // Check if both players are in the room
                             if (roomState && roomState.player1 && roomState.player2) {
+
                                 showMatchStatus('Match was made! The game can now begin.', 'found');
+
+
+
                                 findRandomGameBtn.disabled = true;
 
                                 // Sort players to get a consistent game room name
@@ -1058,6 +1071,10 @@
 
                                 // Get the game room reference
                                 const gameRef = child(gameRoomsRef, gameRoomName);
+
+                                // Inside your joinGame or createGame function
+                                localStorage.setItem('ttt2_currentGameRoom', gameRoomName);
+                                //localStorage.setItem('ultimateTTTPlayerId', userId);
 
                                 // This check ensures only one player creates the room, but both players get the game room name
                                 get(gameRef).then(async (gameSnapshot) => {
@@ -1095,6 +1112,25 @@
                 findRandomGameBtn.disabled = false;
             }
         }
+
+        function checkReconnection() {
+
+            const savedGameId = localStorage.getItem('ttt2_currentGameRoom');
+
+            if (savedGameId) {
+
+                // Try to reconnect to this game
+                gameRoomName = savedGameId;
+                onlineMenuDIV.classList.add("hidden");
+                gameDiv.classList.remove("hidden");
+                
+                createBoard();
+                listenForGameUpdates(gameRoomName);
+                reconnectToGame(savedGameId, savedPlayerId);
+            }
+        }
+        
+        checkReconnection();
 
 
 
@@ -1719,14 +1755,34 @@
 
             // Check for a win and display the win message
             if (checkWin(gameState.bigBoardState, X) || checkWin(gameState.bigBoardState, O)) {
+
                 winmessageDIV.style.display = 'block';
                 const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
                 winmessage.innerHTML = `${winner} won!`;
                 showWinAnimation(winner);
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+
+                endGame();
+
             } else {
                 winmessageDIV.style.display = 'none';
             }
+
+            // check for draw
+            if (isBoardFull(bigBoardState)) {
+
+                winmessageDIV.style.display = 'block';
+                const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
+                winmessage.innerHTML = `${winner} won!`;
+                showWinAnimation(winner);
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+
+                endGame();
+
+                return;
+            }
+
+
         }
 
 
