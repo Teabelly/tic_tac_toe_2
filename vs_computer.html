@@ -383,6 +383,19 @@
         <div><button id="playBtn" class="button">Play</button></div>
     </div>
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6942325118241611"
+            crossorigin="anonymous"></script>
+    <!-- ttt2 -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6942325118241611"
+         data-ad-slot="5161778368"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
     <div id="game" class="hidden">
 
         <div class="players">
@@ -399,12 +412,14 @@
 
             <h1 id="winMessageh1"> </h1>
 
-            <button id="resetBtn" class="color-button green" >
+            <button id="resetBtn" class="color-button green">
                 <span class="material-symbols-outlined">refresh</span> Rematch
             </button>
 
         </div>
     </div>
+
+
 
     <script>
         // DOM Elements
@@ -414,9 +429,9 @@
         const name1Span = document.getElementById('name1');
         const name2Span = document.getElementById('name2');
         const bigBoardDiv = document.getElementById('bigBoard');
-        const winmessage = document.getElementById('winMessageh1')
-        const winmessageDiv = document.getElementById('winMessage')
-        const instructionBack = document.getElementById('instruction_back')
+        const winmessage = document.getElementById('winMessageh1');
+        const winmessageDiv = document.getElementById('winMessage');
+        const instructionBack = document.getElementById('instruction_back');
 
         // Game State Variables
         let players = [];
@@ -486,7 +501,7 @@
 
         document.getElementById('resetBtn').addEventListener('click', () => {
 
-            
+
             // Reset game state
             bigBoardState = Array(3).fill(0).map(() => Array(3).fill(null));
             subBoardStates = Array(3).fill(0).map(() => Array(3).fill(0).map(() =>
@@ -625,6 +640,8 @@
                 overlay.classList.add('winner-mark');
                 overlay.textContent = mark;
                 cell.appendChild(overlay);
+
+
             } else if (isFullSubgrid(subBoardStates[br][bc])) {
                 // Check for subgrid draw
                 let subgridWon = false;
@@ -654,6 +671,15 @@
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
                 return;
             }
+
+            if (isBoardFull(bigBoardState)) {
+                winmessageDiv.style.display = 'block';
+                showWinAnimation('draw');
+                winmessage.innerHTML = `A bore draw!`;
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+                return;
+            }
+
 
             // Determine next subgrid
             if (bigBoardState[sr][sc] === null) { // If the target big cell is NOT won/drawn
@@ -780,6 +806,7 @@
                     winningMove = move;
                     break; // Take the win immediately
                 }
+
 
                 // 2. Check for immediate block in current subgrid
                 const subgridCloneOpponent = subBoardStates[br][bc].map(row => [...row]);
@@ -1088,6 +1115,10 @@
             }
             return lineScore;
         }
+
+
+
+
     </script>
 </body>
 </html>

@@ -494,9 +494,9 @@
         const playLocalButton = document.getElementById('playLocalButton');
         const howToPlayButton = document.getElementById('howToPlayButton');
         const instructionsDiv = document.getElementById('instructions')
-        const winmessage = document.getElementById('winMessageh1')
-        const winmessageDIV = document.getElementById('winMessage')
-        const instructionBack = document.getElementById('instruction_back')
+        const winmessage = document.getElementById('winMessageh1');
+        const winmessageDIV = document.getElementById('winMessage');
+        const instructionBack = document.getElementById('instruction_back');
 
         const imageElement = document.getElementById('logoImage');
 
@@ -585,10 +585,7 @@
             // Enable board interactions
             gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = '');
 
-            // Optionally trigger bot if bot starts
-            if (currentPlayer === 1) {
-                setTimeout(botMove, 100);
-            }
+            
         });
 
         function showWinAnimation(winner) {
@@ -732,6 +729,18 @@
                 return;
             }
 
+            // check if draw
+            if (isBoardFull(bigBoardState)) {
+
+                winmessageDIV.style.display = 'block';
+                showWinAnimation('draw');
+                winmessage.innerHTML = `A bore draw!`;
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+
+                return;
+            }
+
+        
             // Determine next subgrid
             if (!bigBoardState[sr][sc]) {
                 nextSubgrid = [sr, sc];
@@ -742,6 +751,18 @@
             currentPlayer = 1 - currentPlayer;
             renderNames();
             highlightNextSubgrid();
+        }
+
+        function isBoardFull(board) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    // If any cell is null, it's not full. 'X', 'O', or 'draw' means it's occupied.
+                    if (board[r][c] === null) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         function findCell(r, c) {
@@ -772,6 +793,7 @@
         function isFullSubgrid(subgrid) {
             return subgrid.every(row => row.every(cell => cell !== null));
         }
+
 
     </script>
 

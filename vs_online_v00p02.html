@@ -1519,6 +1519,14 @@
                 return;
             }
 
+            if (isBoardFull(bigBoardState)) {
+                winmessageDiv.style.display = 'block';
+                showWinAnimation('draw');
+                winmessage.innerHTML = `A bore draw!`;
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+                return;
+            }
+
             // Determine next subgrid
             if (bigBoardState[sr][sc] === EMPTY) {
                 nextSubgrid = [sr, sc];
@@ -1539,6 +1547,17 @@
 
         }
 
+        function isBoardFull(board) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    // If any cell is null, it's not full. 'X', 'O', or 'draw' means it's occupied.
+                    if (board[r][c] === null) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         function findCell(r, c) {
             return [...bigBoardDiv.children].find(el => +el.dataset.row === r && +el.dataset.col === c);
@@ -1734,9 +1753,6 @@
                 console.error("Error updating game state:", error);
             }
         }
-
-
-
 
 
 
