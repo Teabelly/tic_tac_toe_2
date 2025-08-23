@@ -623,7 +623,7 @@
 
         <div class="main-title">
             <img id="logoImage" class="header-image" src="images/logo_online.png" alt="wombatLogoOnline">
-            <h1> Play online v0.03 </h1>
+            <h1> Play online v0.04 </h1>
         </div>
 
 
@@ -996,6 +996,7 @@
 
 
         async function findAndJoinRoom() {
+
             if (!currentUsername) {
                 showMatchStatus('Please generate a username first.', 'error');
                 return;
@@ -1126,11 +1127,11 @@
                 
                 createBoard();
                 listenForGameUpdates(gameRoomName);
-                reconnectToGame(savedGameId, savedPlayerId);
+                //reconnectToGame(savedGameId, savedPlayerId);
             }
         }
         
-        checkReconnection();
+        //checkReconnection();
 
 
 
@@ -1762,7 +1763,9 @@
                 showWinAnimation(winner);
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
 
-                endGame();
+                endGame(gameRoomName);
+
+                
 
             } else {
                 winmessageDIV.style.display = 'none';
@@ -1777,12 +1780,30 @@
                 showWinAnimation(winner);
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
 
-                endGame();
+                endGame(gameRoomName);
 
                 return;
             }
 
 
+        }
+
+        function endGame(gameId) {
+
+            const savedGameId = localStorage.getItem('ttt2_currentGameRoom');
+
+            const gameRef = ref(database,'games/' + savedGameId);
+
+            remove(gameRef)
+                .then(() => {
+                    console.log("Game successfully deleted!");
+                })
+                .catch((error) => {
+                    console.error("Error removing game: ", error);
+                });
+
+            // Also clear local storage after the game is over
+            localStorage.removeItem('ttt2_currentGameRoom');
         }
 
 
