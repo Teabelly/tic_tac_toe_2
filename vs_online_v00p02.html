@@ -37,7 +37,7 @@
             align-items: center;
             background-color: #f7f3f2ff; /* Light background */
             color: #333;
-            padding: 0.1rem;
+            padding: 1rem;
             box-sizing: border-box;
         }
 
@@ -590,16 +590,7 @@
         .header-image {
             /* This is the class for your image */
             width: 75%; /* The image will take up 100% of its parent's width */
-            margin-top: 1%;
-        }
-
-        .body-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; /* This will push content to the top */
-            width: 100vw;
-            height: 100vh;
+            margin-top: 11%;
         }
 
     </style>
@@ -610,7 +601,7 @@
 
     
 
-    <div id="onlineMenu" class="body-wrapper">
+    <div id="onlineMenu">
 
 
 
@@ -623,7 +614,7 @@
 
         <div class="main-title">
             <img id="logoImage" class="header-image" src="images/logo_online.png" alt="wombatLogoOnline">
-            <h1> Play online v0.04 </h1>
+            <h1> Play online v0.02 </h1>
         </div>
 
 
@@ -654,7 +645,7 @@
             <p id="inviteMessage" class="hidden"></p>
         </div>
 
-        <div class="container" style="display:none;">
+        <div class="container">
             <h1>Send Invite: </h1>
             <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                 <input type="text" id="inviteInput" placeholder="username..."></input>
@@ -665,7 +656,7 @@
             </ul>
         </div>
 
-        <div class="container" style="display:none;">
+        <div class="container">
             <h1>Challenge(s): </h1>
             <ul id="receivedInvitesList" class="invite-list">
                 <li class="loading-text">No pending challenges.</li>
@@ -869,7 +860,7 @@
             if (oldUsername && oldUsername !== username) {
                 const oldUserRef = ref(database, `online_users/${oldUsername.replace(/\s/g, '_')}`);
                 await set(oldUserRef, null).catch(error => console.error("Error removing old username's online status:", error));
-                //console.log(`User ${oldUsername} is now offline.`);
+                console.log(`User ${oldUsername} is now offline.`);
             }
 
             const userRef = ref(database, `online_users/${username.replace(/\s/g, '_')}`);
@@ -877,7 +868,7 @@
                 await set(userRef, true);
                 // Set up onDisconnect to remove this user from online_users
                 onDisconnect(userRef).remove();
-                //console.log(`User ${username} is now online.`);
+                console.log(`User ${username} is now online.`);
             } catch (error) {
                 console.error("Error setting online status:", error);
                 showGeneralError(`Failed to set online status: ${error.message}`);
@@ -918,7 +909,7 @@
 
                 // --- NEW: Handle cleanup for matchmaking if the user was in a room ---
                 if (currentRoomRef) {
-                    //console.log("Leaving previous room on username change.");
+                    console.log("Leaving previous room on username change.");
                     // We use remove() on the entire room to reset it completely if the user leaves
                     // If the other player is still in the room, this will trigger the room reset logic.
                     await remove(currentRoomRef).catch(err => console.error("Error leaving previous room:", err));
@@ -996,7 +987,6 @@
 
 
         async function findAndJoinRoom() {
-
             if (!currentUsername) {
                 showMatchStatus('Please generate a username first.', 'error');
                 return;
@@ -1051,6 +1041,8 @@
 
                             if (!roomState) {
                                 showMatchStatus('Opponent disconnected. Room reset. Please find a new match.', 'error');
+
+
                                 findRandomGameBtn.disabled = false;
                                 currentRoomRef = null;
                                 playerNumber = null;
@@ -1059,12 +1051,12 @@
 
                             // Check if both players are in the room
                             if (roomState && roomState.player1 && roomState.player2) {
-
                                 showMatchStatus('Match was made! The game can now begin.', 'found');
-
-
-
                                 findRandomGameBtn.disabled = true;
+
+                                
+
+
 
                                 // Sort players to get a consistent game room name
                                 const playersSorted = [roomState.player1, roomState.player2].sort();
@@ -1073,9 +1065,20 @@
                                 // Get the game room reference
                                 const gameRef = child(gameRoomsRef, gameRoomName);
 
-                                // Inside your joinGame or createGame function
-                                localStorage.setItem('ttt2_currentGameRoom', gameRoomName);
-                                //localStorage.setItem('ultimateTTTPlayerId', userId);
+
+                                // After game room is confirmed (inside findAndJoinRoom)
+                                const disconnectRef = child(gameRef, `disconnected/${currentUsername}`);
+                                onDisconnect(disconnectRef).set(Date.now());
+
+                                const reconnectRef = child(gameRef, `disconnected/${currentUsername}`);
+                                set(reconnectRef, null); // Clear disconnection marker
+                                cancelGameCleanupTimer();
+
+                                currentRoomName = gameRoomName; // <-- make sure this is set right after the room is created or found
+                                
+
+
+
 
                                 // This check ensures only one player creates the room, but both players get the game room name
                                 get(gameRef).then(async (gameSnapshot) => {
@@ -1095,7 +1098,11 @@
                                     gameDiv.classList.remove("hidden");
                                     players = [roomState.player1, roomState.player2];
                                     createBoard();
+                                    
+                                    listenForDisconnections(gameRoomName);
                                     listenForGameUpdates(gameRoomName);
+
+
                                 });
                             } else {
                                 showMatchStatus('Waiting for an opponent...', 'loading');
@@ -1114,25 +1121,40 @@
             }
         }
 
-        function checkReconnection() {
+        let cleanupTimeout = null;
 
-            const savedGameId = localStorage.getItem('ttt2_currentGameRoom');
+        function listenForDisconnections(gameRoomName) {
+            const disconnectsRef = ref(database, 'game_rooms/' + gameRoomName + '/disconnected');
 
-            if (savedGameId) {
+            onValue(disconnectsRef, (snapshot) => {
+                const disconnected = snapshot.val();
+                if (disconnected && Object.keys(disconnected).length > 0) {
+                    console.log('Player disconnected, starting cleanup timer...');
+                    startGameCleanupTimer(gameRoomName, 30000);
+                }
+            });
+        }
 
-                // Try to reconnect to this game
-                gameRoomName = savedGameId;
-                onlineMenuDIV.classList.add("hidden");
-                gameDiv.classList.remove("hidden");
-                
-                createBoard();
-                listenForGameUpdates(gameRoomName);
-                //reconnectToGame(savedGameId, savedPlayerId);
+        function startGameCleanupTimer(roomName, delay = 30000) {
+            if (cleanupTimeout) return; // avoid multiple timers
+            cleanupTimeout = setTimeout(async () => {
+                const gameRef = ref(database, 'game_rooms/' + roomName);
+                await remove(gameRef);
+                await remove(ref(database, 'game_rooms/' + roomName + 'disconnected/'));
+
+                remove(ref(database, 'game_rooms/' + gameRoomName + '/disconnected'));
+
+                console.log(`Game ${roomName} removed due to inactivity.`);
+                cleanupTimeout = null;
+            }, delay);
+        }
+
+        function cancelGameCleanupTimer() {
+            if (cleanupTimeout) {
+                clearTimeout(cleanupTimeout);
+                cleanupTimeout = null;
             }
         }
-        
-        //checkReconnection();
-
 
 
         /**
@@ -1553,6 +1575,10 @@
                 winmessage.innerHTML = `${players[currentPlayer]} won!`;
 
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+
+                remove(ref(database, 'game_rooms/' + currentRoomName));
+
+
                 return;
             }
 
@@ -1561,6 +1587,9 @@
                 showWinAnimation('draw');
                 winmessage.innerHTML = `A bore draw!`;
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+
+                remove(ref(database, 'game_rooms/' + currentRoomName));
+
                 return;
             }
 
@@ -1587,14 +1616,15 @@
         function isBoardFull(board) {
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
-                    // If any cell is null, it's not full. 'X', 'O', or 'draw' means it's occupied.
-                    if (board[r][c] === null) {
+                    // If any cell is EMPTY (0), it's not full
+                    if (board[r][c] === 0) {
                         return false;
                     }
                 }
             }
             return true;
         }
+
 
         function findCell(r, c) {
             return [...bigBoardDiv.children].find(el => +el.dataset.row === r && +el.dataset.col === c);
@@ -1661,7 +1691,8 @@
                 players: {
                     player1: player1Username,
                     player2: player2Username
-                }
+                },
+                disconnected: {}
             });
 
             console.log(`Created new game room: ${gameRoomName}`);
@@ -1676,8 +1707,10 @@
 
             // Attach a real-time listener to the game state
             onValue(gameStateRef, (snapshot) => {
+
                 const gameState = snapshot.val();
 
+                
                 if (gameState) {
                     // Update local game state variables
                     bigBoardState = gameState.bigBoardState;
@@ -1688,6 +1721,18 @@
                     // Call a function to update the HTML display based on the new state
                     updateGameUI(gameState);
                 }
+
+                if (!gameState) {
+                    // Game was deleted (opponent left or timed out)
+                    //alert("Your opponent left the game. Returning to lobby...");
+                    onDisconnect(disconnectRef).cancel();
+                    remove(ref(database, 'game_rooms/' + gameRoomName + '/disconnected'));
+                    remove(ref(database, 'game_rooms/' + gameRoomName));
+                    window.location.reload(); // Full refresh
+                    return;
+                }
+
+
             });
         }
 
@@ -1754,73 +1799,45 @@
                 }
             });
 
-            // Check for a win and display the win message
-            if (checkWin(gameState.bigBoardState, X) || checkWin(gameState.bigBoardState, O)) {
+            const mark = currentPlayer === 0 ? X : O;
+
+            if (checkWin(bigBoardState, mark)) {
 
                 winmessageDIV.style.display = 'block';
                 const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
                 winmessage.innerHTML = `${winner} won!`;
                 showWinAnimation(winner);
                 gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
-
-                endGame(gameRoomName);
-
-                
-
-            } else {
-                winmessageDIV.style.display = 'none';
-            }
-
-            // check for draw
-            if (isBoardFull(bigBoardState)) {
-
-                winmessageDIV.style.display = 'block';
-                const winner = checkWin(gameState.bigBoardState, X) ? players[0] : players[1];
-                winmessage.innerHTML = `${winner} won!`;
-                showWinAnimation(winner);
-                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
-
-                endGame(gameRoomName);
 
                 return;
             }
 
+            // check for draw
+            if (isBoardFull(bigBoardState)) {
+                winmessageDIV.style.display = 'block';
+                showWinAnimation('draw');
+                winmessage.innerHTML = `A bore draw!`;
+                gameDiv.querySelectorAll('.subcell').forEach(sc => sc.style.pointerEvents = 'none');
+                return;
+            }
 
-        }
 
-        function endGame(gameId) {
-
-            const savedGameId = localStorage.getItem('ttt2_currentGameRoom');
-
-            const gameRef = ref(database,'games/' + savedGameId);
-
-            remove(gameRef)
-                .then(() => {
-                    console.log("Game successfully deleted!");
-                })
-                .catch((error) => {
-                    console.error("Error removing game: ", error);
-                });
-
-            // Also clear local storage after the game is over
-            localStorage.removeItem('ttt2_currentGameRoom');
         }
 
 
         // Add this new function to handle updating the database
         async function updateFirebaseState() {
-
             if (!currentRoomName) {
-                console.error("No active game room to update.");
-                return;
+                console.warn("Tried to update Firebase before game room was ready.");
+                return; // prevent breaking the flow
             }
 
             const gameStateRef = ref(database, 'game_rooms/' + currentRoomName + '/state');
             const newState = {
-                bigBoardState: bigBoardState,
-                subBoardStates: subBoardStates,
-                currentPlayer: currentPlayer,
-                nextSubgrid: nextSubgrid
+                bigBoardState,
+                subBoardStates,
+                currentPlayer,
+                nextSubgrid
             };
 
             try {
@@ -1830,6 +1847,10 @@
                 console.error("Error updating game state:", error);
             }
         }
+
+
+
+
 
 
 
