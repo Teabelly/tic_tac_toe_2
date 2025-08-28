@@ -385,17 +385,7 @@
     </div>
 
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6942325118241611"
-            crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block; text-align:center;"
-         data-ad-layout="in-article"
-         data-ad-format="fluid"
-         data-ad-client="ca-pub-6942325118241611"
-         data-ad-slot="6295746696"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+   
 
     <div id="game" class="hidden">
 
@@ -681,6 +671,8 @@
                 return;
             }
 
+           
+
 
             // Determine next subgrid
             if (bigBoardState[sr][sc] === null) { // If the target big cell is NOT won/drawn
@@ -733,13 +725,15 @@
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
                     // If any cell is null, it's not full. 'X', 'O', or 'draw' means it's occupied.
-                    if (board[r][c] === 0) {
+                    if (board[r][c] === null) {
                         return false;
                     }
                 }
             }
             return true;
         }
+
+        
 
         function botMove() {
             let moves = [];
