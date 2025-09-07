@@ -8,14 +8,17 @@
 
 
     <title> [tic tac toe]2 </title>
-    
-    
- 
- 	 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=closecontent_copyinfosend" />
+
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=closecontent_copyinfosend" />
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6942325118241611"
+            crossorigin="anonymous"></script>
+
     <style>
-    
+
         /* Your existing CSS here, adapted for the username generator context */
         html, body {
             width: 100vw;
@@ -28,7 +31,7 @@
         body {
             font-family: "Inter", sans-serif; /* Prefer Inter as per instructions */
             /* background-image: url('background_v001p0.png');
-    			background-size: cover; */
+                background-size: cover; */
 
             text-align: center;
             display: flex;
@@ -62,12 +65,12 @@
             margin-bottom: 1.5rem; /* Keep some space below this row */
         }
 
-        .username-info-row h1 {
-            font-size: 1rem; /* Adjust font size to fit in a row */
-            margin-bottom: 0; /* Remove default h1 margin */
-            white-space: nowrap; /* Prevent "Username:" from wrapping */
-            color: #1a202c; /* Ensure color is consistent */
-        }
+            .username-info-row h1 {
+                font-size: 1rem; /* Adjust font size to fit in a row */
+                margin-bottom: 0; /* Remove default h1 margin */
+                white-space: nowrap; /* Prevent "Username:" from wrapping */
+                color: #1a202c; /* Ensure color is consistent */
+            }
 
         #usernameDisplay {
             font-size: 1rem;
@@ -82,7 +85,7 @@
             justify-content: flex-start; /* Align text to start */
             word-break: break-all; /* Prevent overflow for long names */
         }
-        
+
         #usernameInfoDisplay {
             font-size: 1rem;
             font-weight: 600;
@@ -114,36 +117,36 @@
             cursor: pointer; /* Indicate it's clickable */
             border: none;
             outline: none;
-            
             display: flex; /* To center the icon */
             align-items: center;
             justify-content: center;
         }
-        .copy-button:hover {
-            background-color: #60a5fa;
-            transform: translateY(-1px);
-        }
-        .copy-button:active {
-            background-color: #69baceff;
-            transform: translateY(0);
-            box-shadow: 0 1px 2px rgba[0, 0, 0, 0.1];
-        }
-        .copy-button .material-symbols-outlined {
-            font-size: 1.2rem; /* Adjust icon size */
-            line-height: 1; /* Ensure icon is centered */
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; /* Ensure icon style */
-        }
-         
+
+            .copy-button:hover {
+                background-color: #60a5fa;
+                transform: translateY(-1px);
+            }
+
+            .copy-button:active {
+                background-color: #69baceff;
+                transform: translateY(0);
+                box-shadow: 0 1px 2px rgba[0, 0, 0, 0.1];
+            }
+
+            .copy-button .material-symbols-outlined {
+                font-size: 1.2rem; /* Adjust icon size */
+                line-height: 1; /* Ensure icon is centered */
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; /* Ensure icon style */
+            }
+
         .info-username {
             background-color: #60a5fa; /* A lighter blue */
             color: white;
             padding: 0.5rem 0.8rem;
             border-radius: 0.5rem;
             font-size: 1rem;
-            
             border: none;
             outline: none;
-            
             display: flex; /* To center the icon */
             align-items: center;
             justify-content: center;
@@ -154,6 +157,7 @@
             margin-top: 1rem;
             font-size: 0.9rem;
         }
+
         .success-message {
             color: #38a169; /* Green for success */
             margin-top: 1rem;
@@ -166,43 +170,55 @@
             background-color: #111;
             color: #999;
         }
-        body.dark-mode .container {
-            background-color: #222;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
-        }
-        body.dark-mode h1 {
-            color: #eee;
-        }
-        body.dark-mode #usernameDisplay, body.dark-mode #onlineUsersCount, body.dark-mode .invite-item, body.dark-mode #matchStatus {
-            color: #ccc;
-        }
-        body.dark-mode .generate-button {
-            background-color: #3182ce;
-        }
-        body.dark-mode .generate-button:hover {
-            background-color: #2b6cb0;
-        }
-        body.dark-mode .generate-button:active {
-            background-color: #1a569d;
-        }
-        body.dark-mode .copy-button {
-            background-color: #3b82f6;
-        }
-        body.dark-mode .copy-button:hover {
-            background-color: #2563eb;
-        }
-        body.dark-mode .copy-button:active {
-            background-color: #1a569d;
-        }
-        body.dark-mode .loading-text {
-            color: #888;
-        }
-        body.dark-mode .error-message {
-            color: #f56565;
-        }
-        body.dark-mode .success-message {
-            color: #68d391;
-        }
+
+            body.dark-mode .container {
+                background-color: #222;
+                box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+            }
+
+            body.dark-mode h1 {
+                color: #eee;
+            }
+
+            body.dark-mode #usernameDisplay, body.dark-mode #onlineUsersCount, body.dark-mode .invite-item, body.dark-mode #matchStatus {
+                color: #ccc;
+            }
+
+            body.dark-mode .generate-button {
+                background-color: #3182ce;
+            }
+
+                body.dark-mode .generate-button:hover {
+                    background-color: #2b6cb0;
+                }
+
+                body.dark-mode .generate-button:active {
+                    background-color: #1a569d;
+                }
+
+            body.dark-mode .copy-button {
+                background-color: #3b82f6;
+            }
+
+                body.dark-mode .copy-button:hover {
+                    background-color: #2563eb;
+                }
+
+                body.dark-mode .copy-button:active {
+                    background-color: #1a569d;
+                }
+
+            body.dark-mode .loading-text {
+                color: #888;
+            }
+
+            body.dark-mode .error-message {
+                color: #f56565;
+            }
+
+            body.dark-mode .success-message {
+                color: #68d391;
+            }
 
         /* Dark mode toggle switch styles (from original script) */
         .switch {
@@ -214,11 +230,13 @@
             height: 24px;
             z-index: 10; /* Ensure it's above other content */
         }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -230,39 +248,38 @@
             transition: 0.4s;
             border-radius: 34px;
         }
-        .slider:before {
-            position: absolute;
-            content: "☀";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 18px;
-            font-size: 12px;
-            color: black;
-        }
+
+            .slider:before {
+                position: absolute;
+                content: "☀";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: 0.4s;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 18px;
+                font-size: 12px;
+                color: black;
+            }
+
         input:checked + .slider {
             background-color: #2196F3;
         }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-            content: "☾";
-            color: black;
-        }
-         
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+                content: "☾";
+                color: black;
+            }
+
         /* Material Symbols Icon settings */
         .material-symbols-outlined {
-          font-variation-settings:
-          'FILL' 0,
-          'wght' 400,
-          'GRAD' 0,
-          'opsz' 24
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
         }
-         
+
         /* Styles for online users count */
         #onlineUsersCount {
             font-size: 1.8rem;
@@ -282,6 +299,7 @@
             font-size: 1rem;
             color: #333;
         }
+
         body.dark-mode #inviteInput {
             background-color: #444;
             border-color: #555;
@@ -300,15 +318,18 @@
             align-items: center;
             justify-content: center;
         }
-        #sendInviteBtn:hover {
-            background-color: #45a049;
-        }
+
+            #sendInviteBtn:hover {
+                background-color: #45a049;
+            }
+
         body.dark-mode #sendInviteBtn {
             background-color: #48bb78;
         }
-        body.dark-mode #sendInviteBtn:hover {
-            background-color: #38a169;
-        }
+
+            body.dark-mode #sendInviteBtn:hover {
+                background-color: #38a169;
+            }
 
         /* Styles for invite lists */
         .invite-list {
@@ -331,6 +352,7 @@
             color: #333;
             word-break: break-word; /* Ensure long usernames wrap */
         }
+
         body.dark-mode .invite-item {
             background-color: #333;
             color: #ccc;
@@ -346,19 +368,23 @@
             font-size: 1.2rem;
             transition: transform 0.2s;
         }
-        .invite-actions button:hover {
-            transform: scale(1.1);
-        }
+
+            .invite-actions button:hover {
+                transform: scale(1.1);
+            }
+
         .invite-actions .accept-btn {
             color: #4CAF50; /* Green tick */
         }
+
         .invite-actions .reject-btn {
             color: #e53e3e; /* Red cross */
         }
+
         .invite-actions .cancel-btn { /* NEW STYLE for cancel button */
             color: #ff9800; /* Orange for cancel */
         }
-        
+
         .invite-status-pending {
             color: #6b7280; /* Gray for pending */
             font-style: italic;
@@ -371,6 +397,7 @@
             padding-top: 1.5rem;
             border-top: 1px solid #e2e8f0; /* Separator line */
         }
+
         body.dark-mode #randomMatchSection {
             border-color: #4a5568;
         }
@@ -385,80 +412,86 @@
             font-size: 1.1rem;
             transition: background-color 0.2s, transform 0.1s;
         }
-        #findRandomGameBtn:hover {
-            background-color: #b46462ff;
-            transform: translateY(-1px);
-        }
-        #findRandomGameBtn:active {
-            background-color: #7D3C98;
-            transform: translateY(0);
-        }
+
+            #findRandomGameBtn:hover {
+                background-color: #b46462ff;
+                transform: translateY(-1px);
+            }
+
+            #findRandomGameBtn:active {
+                background-color: #7D3C98;
+                transform: translateY(0);
+            }
+
         #matchStatus {
             margin-top: 1rem;
             font-size: 1.1rem;
             font-weight: 500;
         }
+
         .match-loading {
             color: #60a5fa; /* Blue for loading */
             font-style: italic;
         }
+
         .match-found {
             color: #38a169; /* Green for found */
             font-weight: bold;
         }
+
         .match-error {
             color: #e53e3e; /* Red for error */
         }
-        
-        
+
+
         .usernameInfoDisplay {
-			    position: relative;
-			    display: inline-block;
-			    cursor: pointer;
-			}
-			
-			.hover-message {
-			    visibility: hidden;
-			    opacity: 0;
-			    width: 200px; /* Adjust as needed */
-			    background-color: #555;
-			    color: #fff;
-			    text-align: center;
-			    border-radius: 6px;
-			    padding: 10px 10px;
-			    position: absolute;
-			    z-index: 1;
-			    bottom: 125%; /* Still positions it above the icon */
-			    /* *** MODIFIED PROPERTIES FOR LEFT ALIGNMENT *** */
-			    left: 0; /* Align to the left edge of the parent */
-			    margin-left: 0; /* Remove the negative margin */
-			    /* ********************************************* */
-			    transition: opacity 0.3s, visibility 0.3s;
-			}
-			
-			.hover-message::after {
-			    content: "";
-			    position: absolute;
-			    top: 100%; /* At the bottom of the tooltip */
-			    /* *** MODIFIED PROPERTIES FOR LEFT-ALIGNED ARROW *** */
-			    left: 10px; /* Adjust this value to position the arrow under the icon */
-			    margin-left: 0; /* Remove the negative margin */
-			    /* ************************************************* */
-			    border-width: 5px;
-			    border-style: solid;
-			    border-color: #555 transparent transparent transparent; /* Arrow pointing upwards */
-			}
-			
-			.usernameInfoDisplay:hover .hover-message {
-			    visibility: visible;
-			    opacity: 1;
-			}
-			
-			/* Optional: Style for the info icon itself */
-			.usernameInfoDisplay .material-symbols-outlined {
-			    font-size: 24px;
-			    color: #333;
-			}
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .hover-message {
+            visibility: hidden;
+            opacity: 0;
+            width: 200px; /* Adjust as needed */
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Still positions it above the icon */
+            /* *** MODIFIED PROPERTIES FOR LEFT ALIGNMENT *** */
+            left: 0; /* Align to the left edge of the parent */
+            margin-left: 0; /* Remove the negative margin */
+            /* ********************************************* */
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+            .hover-message::after {
+                content: "";
+                position: absolute;
+                top: 100%; /* At the bottom of the tooltip */
+                /* *** MODIFIED PROPERTIES FOR LEFT-ALIGNED ARROW *** */
+                left: 10px; /* Adjust this value to position the arrow under the icon */
+                margin-left: 0; /* Remove the negative margin */
+                /* ************************************************* */
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent; /* Arrow pointing upwards */
+            }
+
+        .usernameInfoDisplay:hover .hover-message {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Optional: Style for the info icon itself */
+        .usernameInfoDisplay .material-symbols-outlined {
+            font-size: 24px;
+            color: #333;
+        }
 
         .main-title {
             width: 90vw; /* 70% of the viewport width */
@@ -473,12 +506,12 @@
             /* Change the direction of the flex container to vertical */
             flex-direction: column;
         }
-			
-			.main-title h1 {
-			    margin: 0; /* Remove default h1 margin */
-			    font-size: 1em; /* Adjust font size as needed */
-			    color: #333; /* Dark text color */
-			}
+
+            .main-title h1 {
+                margin: 0; /* Remove default h1 margin */
+                font-size: 1em; /* Adjust font size as needed */
+                color: #333; /* Dark text color */
+            }
 
         .hidden {
             display: none;
@@ -559,22 +592,22 @@
             color: #999;
         }
 
-        body.dark-mode .cell {
-            background-color: #222;
-            border-color: #666;
-        }
+            body.dark-mode .cell {
+                background-color: #222;
+                border-color: #666;
+            }
 
-        body.dark-mode .subcell {
-            border-color: #444;
-        }
+            body.dark-mode .subcell {
+                border-color: #444;
+            }
 
-        body.dark-mode .highlight {
-            color: #eee;
-        }
+            body.dark-mode .highlight {
+                color: #eee;
+            }
 
-        body.dark-mode .winner-mark {
-            color: rgba(255, 255, 255, 0.2);
-        }
+            body.dark-mode .winner-mark {
+                color: rgba(255, 255, 255, 0.2);
+            }
 
         .winOverlay {
             display: none;
@@ -592,9 +625,8 @@
             width: 75%; /* The image will take up 100% of its parent's width */
             margin-top: 11%;
         }
-
     </style>
-    
+
 </head>
 
 <body>
